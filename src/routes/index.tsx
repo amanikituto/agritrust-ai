@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BarChart3,
   Brain,
+  Building2,
   CloudRain,
   Github,
   Globe2,
@@ -14,6 +15,7 @@ import {
   Shield,
   ShieldCheck,
   Sparkles,
+  Sprout,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -73,12 +75,27 @@ function Nav() {
           <a href="#partners" className="hover:text-foreground transition-colors">Partners</a>
         </nav>
         <div className="flex items-center gap-2">
-          <button className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground sm:inline-flex">
+          <Link
+            to="/auth"
+            search={{ mode: "signin" }}
+            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground sm:inline-flex"
+          >
             Sign in
-          </button>
-          <button className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
-            Request Demo <ArrowRight className="h-3.5 w-3.5" />
-          </button>
+          </Link>
+          <Link
+            to="/auth"
+            search={{ role: "farmer", mode: "signup" }}
+            className="hidden items-center gap-1.5 rounded-lg glass-strong px-3.5 py-2 text-sm font-semibold transition hover:bg-surface-elevated md:inline-flex"
+          >
+            <Sprout className="h-3.5 w-3.5 text-emerald" /> Farmer
+          </Link>
+          <Link
+            to="/auth"
+            search={{ role: "lender", mode: "signup" }}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110"
+          >
+            <Building2 className="h-3.5 w-3.5" /> Lender Portal
+          </Link>
         </div>
       </div>
     </header>
