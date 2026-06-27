@@ -26,6 +26,10 @@ import {
 
 type Tier = "basic" | "standard" | "premium";
 
+// Fallback Masumi pricing — mirrors src/lib/masumi.server.ts so the paywall
+// always shows correct KES amounts even if listAgentInfo() is still loading.
+const FALLBACK_PRICING: Record<Tier, number> = { basic: 50, standard: 150, premium: 400 };
+
 interface AgritrustProfile {
   farmer_id: string;
   tier: Tier;
@@ -116,7 +120,7 @@ function DecisionWorkspace() {
     },
   });
 
-  const price = info.data?.pricing[tier] ?? 0;
+  const price = info.data?.pricing[tier] ?? FALLBACK_PRICING[tier];
   const isUnlocked = !!unlocked;
   const wasCached = isUnlocked && !buy.data && !!existing.data;
 
@@ -161,7 +165,7 @@ function DecisionWorkspace() {
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {(["basic", "standard", "premium"] as const).map((t) => {
-              const p = info.data?.pricing[t] ?? 0;
+              const p = info.data?.pricing[t] ?? FALLBACK_PRICING[t];
               const active = tier === t;
               const labels: Record<Tier, string> = {
                 basic: "Score + recommendation",
