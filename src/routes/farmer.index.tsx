@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Activity,
   Bell,
@@ -22,6 +22,9 @@ import {
   Wallet,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getMyTrustScore } from "@/lib/farmer-data.functions";
 import {
   Bars,
   Card,
@@ -39,8 +42,15 @@ export const Route = createFileRoute("/farmer/")({
 
 function FarmerOverview() {
   const { user } = useAuth();
+  const tsFn = useServerFn(getMyTrustScore);
+  const ts = useQuery({ queryKey: ["trust", "mine"], queryFn: () => tsFn() });
   const name =
     (user?.user_metadata?.full_name as string | undefined)?.split(" ")[0] ?? "Farmer";
+
+  const score = ts.data?.score ?? 0;
+  const readiness = ts.data?.credit_readiness ?? 0;
+  const eligibility = ts.data?.loan_eligibility_kes ?? 0;
+  const climate = ts.data?.climate_risk ?? "—";
 
   return (
     <div className="space-y-8">
@@ -50,12 +60,12 @@ function FarmerOverview() {
         sub="Your farm is becoming more credit-ready."
         right={
           <div className="flex flex-wrap items-center gap-2">
-            <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
+            <Link to="/farmer/loans" className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
               <PlusCircle className="h-4 w-4" /> Apply for loan
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-xl glass-strong px-4 py-2.5 text-sm font-semibold transition hover:bg-surface-elevated">
+            </Link>
+            <Link to="/farmer/assistant" className="inline-flex items-center gap-2 rounded-xl glass-strong px-4 py-2.5 text-sm font-semibold transition hover:bg-surface-elevated">
               <Mic className="h-4 w-4" /> Ask AI
-            </button>
+            </Link>
           </div>
         }
       />
@@ -63,22 +73,20 @@ function FarmerOverview() {
       <section className="grid gap-4 lg:grid-cols-[1fr_2fr]">
         <Card title="Trust Score" icon={Shield}>
           <div className="flex flex-col items-center py-2">
-            <Gauge score={742} />
+            <Gauge score={score} />
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs">
-              <span className="rounded-full bg-emerald/10 px-2.5 py-1 font-semibold text-emerald">
-                +18 this month
-              </span>
-              <span className="rounded-full bg-surface-elevated px-2.5 py-1 text-muted-foreground">
-                Good · Low risk
-              </span>
+              <Link to="/farmer/trust-score" className="rounded-full bg-emerald/10 px-2.5 py-1 font-semibold text-emerald hover:bg-emerald/20">
+                {ts.data ? "View breakdown" : "Compute now"}
+              </Link>
+              <span className="rounded-full bg-surface-elevated px-2.5 py-1 text-muted-foreground">Climate · {climate}</span>
             </div>
           </div>
         </Card>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <KpiCard label="Credit readiness" value="78%" tone="emerald" icon={Shield} sub="2 items left" />
-          <KpiCard label="Loan eligibility" value="KES 120,000" tone="sky" icon={Wallet} sub="Pre-qualified" />
-          <KpiCard label="Climate risk" value="Low" tone="gold" icon={CloudRain} sub="Rainfall on track" />
+          <KpiCard label="Credit readiness" value={`${readiness}%`} tone="emerald" icon={Shield} sub="Live" />
+          <KpiCard label="Loan eligibility" value={`KES ${eligibility.toLocaleString()}`} tone="sky" icon={Wallet} sub="Pre-qualified" />
+          <KpiCard label="Climate risk" value={climate} tone="gold" icon={CloudRain} sub="From engine" />
           <KpiCard label="Productivity" value="Healthy" tone="emerald" icon={Sprout} sub="NDVI 0.71" />
           <KpiCard label="Savings 90d" value="+22%" tone="emerald" icon={PiggyBank} sub="vs prev period" />
           <KpiCard label="Coop rank" value="#12 / 240" tone="gold" icon={Users} sub="Kiambu coop" />
@@ -143,20 +151,20 @@ function FarmerOverview() {
       <section className="grid gap-4 lg:grid-cols-3">
         <Card title="Quick actions" icon={Activity} className="lg:col-span-2">
           <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { i: PlusCircle, l: "Apply for loan" },
-              { i: Upload, l: "Upload records" },
-              { i: Sprout, l: "Record harvest" },
-              { i: Landmark, l: "Mobile money" },
-              { i: CloudRain, l: "View weather" },
-              { i: Users, l: "Request officer" },
-            ].map((a) => (
-              <button key={a.l} className="flex items-center gap-3 rounded-xl bg-surface-elevated/60 p-4 text-left text-sm font-medium transition hover:bg-surface-elevated">
+            {([
+              { i: PlusCircle, l: "Apply for loan", to: "/farmer/loans" },
+              { i: Upload, l: "Upload records", to: "/farmer/farm" },
+              { i: Sprout, l: "Record harvest", to: "/farmer/farm" },
+              { i: Landmark, l: "Marketplace", to: "/farmer/marketplace" },
+              { i: CloudRain, l: "View weather", to: "/farmer/climate" },
+              { i: Users, l: "Network", to: "/farmer/network" },
+            ] as const).map((a) => (
+              <Link key={a.l} to={a.to} className="flex items-center gap-3 rounded-xl bg-surface-elevated/60 p-4 text-left text-sm font-medium transition hover:bg-surface-elevated">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/10 text-emerald">
                   <a.i className="h-4 w-4" />
                 </span>
                 {a.l}
-              </button>
+              </Link>
             ))}
           </div>
         </Card>
