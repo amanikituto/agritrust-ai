@@ -122,7 +122,7 @@ export const decideApplication = createServerFn({ method: "POST" })
 
     await context.supabase.from("notifications").insert({
       user_id: row.farmer_id,
-      type: "loan_approval",
+      type: data.decision === "approved" ? "loan_approval" : data.decision === "rejected" ? "loan_rejection" : "system",
       title: `Loan ${data.decision}`,
       body: data.notes ?? `Your application was ${data.decision}.`,
     });
