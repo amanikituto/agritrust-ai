@@ -42,7 +42,7 @@ function AuthPage() {
   const search = Route.useSearch();
   const navigate = useNavigate();
   const router = useRouter();
-  const { user, isFarmer, isLender, loading } = useAuth();
+  const { user, isFarmer, isLender, loading, refresh } = useAuth();
 
   const [accountType, setAccountType] = useState<AccountType>(search.role ?? "farmer");
   const [mode, setMode] = useState<Mode>(search.mode ?? "signin");
@@ -52,13 +52,52 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If already signed in, route to the right dashboard
+  // If already signed in, route to the right dashboard after syncing OAuth intent.
   useEffect(() => {
     if (loading || !user) return;
-    if (isLender) navigate({ to: "/lender" });
-    else if (isFarmer) navigate({ to: "/farmer" });
-    else navigate({ to: "/farmer" }); // fallback while roles load
-  }, [loading, user, isFarmer, isLender, navigate]);
+    let cancelled = false;
+
+    const resolveDashboard = async () => {
+      const storedIntent = sessionStorage.getItem("agritrust:intent") as AccountType | null;
+      const intent = search.role ?? (storedIntent === "lender" || storedIntent === "farmer" ? storedIntent : undefined);
+
+      if (intent && ((intent === "lender" && !isLender) || (intent === "farmer" && !isFarmer))) {
+        setBusy(true);
+        const { error } = await supabase.from("profiles").upsert({
+          id: user.id,
+          full_name:
+            (user.user_metadata?.full_name as string | undefined) ??
+            (user.user_metadata?.name as string | undefined) ??
+            user.email,
+          email: user.email,
+          phone: user.phone,
+          account_type: intent,
+        });
+        if (cancelled) return;
+        if (error) {
+          setError(error.message);
+          setBusy(false);
+          return;
+        }
+        await refresh();
+        sessionStorage.removeItem("agritrust:intent");
+        setBusy(false);
+        navigate({ to: intent === "lender" ? "/lender" : "/farmer" });
+        return;
+      }
+
+      sessionStorage.removeItem("agritrust:intent");
+
+      if (isLender) navigate({ to: "/lender" });
+      else if (isFarmer) navigate({ to: "/farmer" });
+      else setError("Your account does not have a dashboard role yet. Choose Farmer or Lender and continue again.");
+    };
+
+    void resolveDashboard();
+    return () => {
+      cancelled = true;
+    };
+  }, [loading, user, isFarmer, isLender, search.role, navigate, refresh]);
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -70,7 +109,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: window.location.origin + "/auth?role=" + accountType,
             data: { full_name: fullName, account_type: accountType },
           },
         });
@@ -91,13 +130,11 @@ function AuthPage() {
     setError(null);
     setBusy(true);
     try {
-      // Remember intent so the redirect goes to the right dashboard
       sessionStorage.setItem("agritrust:intent", accountType);
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/auth",
+        redirect_uri: window.location.origin + "/auth?role=" + accountType,
       });
       if (result.error) throw result.error;
-      // result.redirected handles the full-page flow
     } catch (e) {
       setError(e instanceof Error ? e.message : "Google sign-in failed");
       setBusy(false);

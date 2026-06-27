@@ -19,7 +19,8 @@ function GraphPage() {
     queryKey: ["graph", "lender"],
     queryFn: () => fetchGraph({ data: {} }),
   });
-  const nodes = data?.nodes.map((n) => ({ label: n.label, type: n.type })) ?? [];
+  const relByTarget = new Map((data?.links ?? []).map((l) => [l.target, l.rel]));
+  const nodes = data?.nodes.map((n) => ({ id: n.id, label: n.label, type: n.type, rel: relByTarget.get(n.id) })) ?? [];
 
   return (
     <div className="space-y-8">

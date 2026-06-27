@@ -1,5 +1,7 @@
 import { useState, type ComponentType, type ReactNode } from "react";
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import {
   Bell,
   ChevronDown,
@@ -15,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { askAssistant } from "@/lib/ai.functions";
 
 export type NavItem = {
   to: string;
@@ -35,6 +38,7 @@ export function DashShell({
   const [assistant, setAssistant] = useState(false);
   const [dark, setDark] = useState(true);
   const [lang, setLang] = useState<"EN" | "SW">("EN");
+  const [search, setSearch] = useState("");
   const { user, signOut } = useAuth();
   const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -123,6 +127,13 @@ export function DashShell({
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter" || !search.trim()) return;
+                sessionStorage.setItem("agritrust:dashboard-search", search.trim());
+                router.navigate({ to: portal === "Farmer" ? "/farmer/farm" : "/lender/farmers" });
+              }}
               placeholder={portal === "Farmer" ? "Search records, advice…" : "Search farmers, applications…"}
               className="h-9 w-full rounded-lg border border-border bg-surface-elevated/60 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-emerald"
             />
@@ -150,6 +161,7 @@ export function DashShell({
               <Sparkles className="h-3.5 w-3.5" /> AI Assistant
             </button>
             <button
+              onClick={() => setAssistant(true)}
               className="grid h-9 w-9 place-items-center rounded-md text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
               aria-label="Voice assistant"
             >
@@ -193,6 +205,28 @@ export function DashShell({
 }
 
 function AssistantDrawer({ portal, onClose }: { portal: string; onClose: () => void }) {
+  const askFn = useServerFn(askAssistant);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
+    { role: "assistant", content: "Hi! Ask me to explain a Trust Score, summarize an application, or recommend next steps." },
+  ]);
+  const send = useMutation({
+    mutationFn: async (content: string) => {
+      const nextMessages = [...messages, { role: "user" as const, content }];
+      setMessages(nextMessages);
+      setInput("");
+      return askFn({ data: { role: portal === "Farmer" ? "farmer" : "lender", messages: nextMessages } });
+    },
+    onSuccess: (data) => setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]),
+    onError: (err) => setMessages((prev) => [...prev, { role: "assistant", content: err instanceof Error ? err.message : "Assistant failed to respond." }]),
+  });
+
+  const submit = (content = input) => {
+    const trimmed = content.trim();
+    if (!trimmed || send.isPending) return;
+    send.mutate(trimmed);
+  };
+
   const suggestions =
     portal === "Farmer"
       ? ["Explain my Trust Score", "How can I improve?", "Today's weather", "Loan readiness"]
@@ -217,13 +251,17 @@ function AssistantDrawer({ portal, onClose }: { portal: string; onClose: () => v
           </button>
         </div>
         <div className="flex-1 space-y-3 overflow-y-auto p-5">
-          <div className="rounded-xl bg-surface-elevated/60 p-3 text-sm">
-            Hi! Ask me to explain a Trust Score, summarize an application, or recommend next steps.
-          </div>
+          {messages.map((m, i) => (
+            <div key={i} className={`rounded-xl p-3 text-sm ${m.role === "user" ? "ml-8 bg-primary text-primary-foreground" : "mr-8 bg-surface-elevated/60"}`}>
+              {m.content}
+            </div>
+          ))}
           <div className="flex flex-wrap gap-2">
             {suggestions.map((s) => (
               <button
                 key={s}
+                onClick={() => submit(s)}
+                disabled={send.isPending}
                 className="rounded-full bg-emerald/10 px-3 py-1.5 text-xs font-medium text-emerald hover:bg-emerald/20"
               >
                 {s}
@@ -235,11 +273,14 @@ function AssistantDrawer({ portal, onClose }: { portal: string; onClose: () => v
           <div className="flex items-center gap-2 rounded-lg bg-surface-elevated/60 px-3 py-2">
             <Mic className="h-4 w-4 text-muted-foreground" />
             <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && submit()}
               placeholder="Ask anything — text or voice"
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
-            <button className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
-              Send
+            <button onClick={() => submit()} disabled={send.isPending} className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
+              {send.isPending ? "..." : "Send"}
             </button>
           </div>
         </div>
