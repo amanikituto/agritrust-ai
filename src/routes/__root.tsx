@@ -11,6 +11,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AccessibilityProvider } from "@/lib/accessibility";
+import { AuthProvider } from "@/lib/auth";
+import { A11ySettingsButton } from "@/components/A11ySettingsButton";
 
 function NotFoundComponent() {
   return (
@@ -127,8 +130,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AccessibilityProvider>
+        <AuthProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <A11ySettingsButton />
+        </AuthProvider>
+      </AccessibilityProvider>
     </QueryClientProvider>
   );
 }
