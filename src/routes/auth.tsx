@@ -82,7 +82,8 @@ function AuthPage() {
         await refresh();
         sessionStorage.removeItem("agritrust:intent");
         setBusy(false);
-        navigate({ to: intent === "lender" ? "/lender" : "/farmer" });
+        // Let the auth context re-render with the refreshed role before navigating;
+        // otherwise the protected lender route may see the stale farmer role briefly.
         return;
       }
 
