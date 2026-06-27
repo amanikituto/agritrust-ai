@@ -22,10 +22,10 @@ function TrustPage() {
         <KpiCard label="Top decile" value={data?.topDecile ? `${data.topDecile}+` : "—"} tone="gold" icon={ShieldCheck} />
         <KpiCard label="At-risk (<600)" value={`${data?.atRisk ?? 0}`} tone="rose" icon={ShieldCheck} />
       </div>
-      <Card title="Score buckets (500–800)">
-        <Bars data={buckets} labels={["500", "550", "600", "650", "700", "750+"]} />
+      <Card title="Score buckets (0–100)">
+        <Bars data={buckets} labels={["<50", "50", "60", "70", "80", "90+"]} />
         <div className="mt-2 grid grid-cols-6 text-center text-[10px] text-muted-foreground">
-          {["500","550","600","650","700","750+"].map(l => <div key={l}>{l}</div>)}
+          {["<50","50","60","70","80","90+"].map(l => <div key={l}>{l}</div>)}
         </div>
       </Card>
     </div>
