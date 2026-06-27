@@ -30,8 +30,8 @@ function TrustScorePage() {
     { l: "Climate", v: Math.round(components.climate ?? 0), c: "var(--emerald-glow)" },
     { l: "Digital", v: Math.round(components.digital ?? 0), c: "var(--rose)" },
   ];
-  const pos = (ts.data?.top_positive_factors ?? []).map((label, i) => ({ label, value: 12 - i * 2 }));
-  const neg = (ts.data?.top_negative_factors ?? []).map((label, i) => ({ label, value: 8 - i * 2 }));
+  const pos = (ts.data?.top_positive_factors ?? []).map((label, i) => ({ l: label, v: 12 - i * 2 }));
+  const neg = (ts.data?.top_negative_factors ?? []).map((label, i) => ({ l: label, v: 8 - i * 2 }));
 
   return (
     <div className="space-y-8">
