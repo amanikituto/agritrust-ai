@@ -165,7 +165,7 @@ function DecisionWorkspace() {
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {(["basic", "standard", "premium"] as const).map((t) => {
-              const p = info.data?.pricing[t] ?? 0;
+              const p = info.data?.pricing[t] ?? FALLBACK_PRICING[t];
               const active = tier === t;
               const labels: Record<Tier, string> = {
                 basic: "Score + recommendation",
