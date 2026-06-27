@@ -113,11 +113,13 @@ export const getLenderPortfolioMetrics = createServerFn({ method: "GET" })
       .reduce((sum, a) => sum + Number(a.amount_kes ?? 0), 0);
     const requestedValue = apps.reduce((sum, a) => sum + Number(a.amount_kes ?? 0), 0);
     const scores = apps.map((a) => a.trust_score_snapshot).filter((v): v is number => typeof v === "number");
+    const usesHundredPointScale = scores.length === 0 || Math.max(...scores) <= 100;
+    const normalizeScore = (score: number) => usesHundredPointScale ? score : Math.round((score / 850) * 100);
     const avgTrust = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
     const sortedScores = [...scores].sort((a, b) => a - b);
     const medianTrust = sortedScores.length ? sortedScores[Math.floor(sortedScores.length / 2)] : 0;
     const topDecile = sortedScores.length ? sortedScores[Math.max(0, Math.floor(sortedScores.length * 0.9) - 1)] : 0;
-    const atRisk = scores.filter((s) => s < 600).length;
+    const atRisk = scores.filter((s) => normalizeScore(s) < 55).length;
     const highClimate = apps.filter((a) => (a.climate_risk_snapshot ?? "").toLowerCase() === "high").length;
     const defaultProxy = submitted ? Math.round(((rejected + apps.filter((a) => (a.ai_recommendation ?? "") === "decline").length * 0.5) / submitted) * 1000) / 10 : 0;
     const approvalRate = submitted ? Math.round((approved / submitted) * 1000) / 10 : 0;
@@ -142,7 +144,8 @@ export const getLenderPortfolioMetrics = createServerFn({ method: "GET" })
 
     const scoreBuckets = [0, 0, 0, 0, 0, 0];
     for (const score of scores) {
-      const idx = Math.min(5, Math.max(0, Math.floor((score - 500) / 50)));
+      const normalized = normalizeScore(score);
+      const idx = normalized >= 90 ? 5 : normalized >= 80 ? 4 : normalized >= 70 ? 3 : normalized >= 60 ? 2 : normalized >= 50 ? 1 : 0;
       scoreBuckets[idx] += 1;
     }
 
@@ -184,9 +187,9 @@ export const getLenderPortfolioMetrics = createServerFn({ method: "GET" })
 
     const riskDistribution = [0, 0, 0, 0, 0, 0];
     for (const a of apps) {
-      const score = a.trust_score_snapshot ?? 600;
+      const score = normalizeScore(a.trust_score_snapshot ?? (usesHundredPointScale ? 60 : 600));
       const climateAdd = (a.climate_risk_snapshot ?? "").toLowerCase() === "high" ? 0.12 : (a.climate_risk_snapshot ?? "").toLowerCase() === "medium" ? 0.06 : 0.02;
-      const pd = Math.max(0.01, Math.min(0.4, (700 - score) / 700 + climateAdd));
+      const pd = Math.max(0.01, Math.min(0.4, (75 - score) / 100 + climateAdd));
       const bucket = Math.min(5, Math.max(0, Math.floor(pd / 0.07)));
       riskDistribution[bucket] += 1;
     }
