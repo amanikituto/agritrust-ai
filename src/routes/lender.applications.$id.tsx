@@ -23,13 +23,28 @@ import {
   lenderRequestFarmerProfile,
   listAgentInfo,
 } from "@/lib/agent.functions";
-import type { AgritrustProfile } from "@/lib/agritrust-agent.server";
+
+type Tier = "basic" | "standard" | "premium";
+
+interface AgritrustProfile {
+  farmer_id: string;
+  tier: Tier;
+  masumi_trust_score: number;
+  components: { mobile_money: number; coop: number; repayment: number; farm_data: number };
+  climate_penalty: number;
+  recommendation: "approve" | "review" | "decline";
+  identity?: { name: string; county: string | null };
+  farm?: { size_acres: number | null; crops: string[]; cooperative: string | null };
+  graph_signals?: { degree: number; coop_members: number; source: "neo4j" | "fallback" };
+  generated_at: string;
+}
+
 
 export const Route = createFileRoute("/lender/applications/$id")({
   component: DecisionWorkspace,
 });
 
-type Tier = "basic" | "standard" | "premium";
+
 
 interface PurchaseResult {
   profile: AgritrustProfile;
