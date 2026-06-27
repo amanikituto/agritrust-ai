@@ -21,6 +21,7 @@ import {
   User,
   Users,
   Wallet,
+  Store,
 } from "lucide-react";
 import type { NavItem } from "@/components/dashboard/DashShell";
 
@@ -31,6 +32,7 @@ export const FARMER_NAV: NavItem[] = [
   { to: "/farmer/trust-score", label: "Trust Score", icon: ShieldCheck },
   { to: "/farmer/credit", label: "Credit Readiness", icon: TrendingUp },
   { to: "/farmer/loans", label: "Loan Applications", icon: Wallet },
+  { to: "/farmer/marketplace", label: "Data Marketplace", icon: Store },
   { to: "/farmer/assistant", label: "AI Assistant", icon: Sparkles },
   { to: "/farmer/climate", label: "Climate Intelligence", icon: CloudRain },
   { to: "/farmer/analytics", label: "Farm Analytics", icon: BarChart3 },
@@ -52,6 +54,7 @@ export const LENDER_NAV: NavItem[] = [
   { to: "/lender/portfolio", label: "Portfolio Analytics", icon: LineChart },
   { to: "/lender/risk", label: "Risk Management", icon: ShieldAlert },
   { to: "/lender/reports", label: "Reports", icon: FileText },
+  { to: "/lender/marketplace", label: "Data Marketplace", icon: Store },
   { to: "/lender/assistant", label: "AI Assistant", icon: Sparkles },
   { to: "/lender/settings", label: "Institution Settings", icon: Building2 },
   { to: "/lender/notifications", label: "Notifications", icon: Bell },
