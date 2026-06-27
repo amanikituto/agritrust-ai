@@ -58,7 +58,7 @@ export const lenderRequestFarmerProfile = createServerFn({ method: "POST" })
       outbound_tx: climate.tx,
       outbound_explorer_url: climate.explorerUrl,
       is_mocked: invocation.isMocked,
-      result: profile as unknown as Record<string, unknown>,
+      result: profile as unknown as never,
     });
 
     return { invocation, profile, climate, receipt, signature, agent };
