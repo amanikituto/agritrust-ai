@@ -54,6 +54,7 @@ export const LENDER_NAV: NavItem[] = [
   { to: "/lender/portfolio", label: "Portfolio Analytics", icon: LineChart },
   { to: "/lender/risk", label: "Risk Management", icon: ShieldAlert },
   { to: "/lender/reports", label: "Reports", icon: FileText },
+  { to: "/lender/agent", label: "AgriTrust Agent", icon: Brain },
   { to: "/lender/marketplace", label: "Data Marketplace", icon: Store },
   { to: "/lender/assistant", label: "AI Assistant", icon: Sparkles },
   { to: "/lender/settings", label: "Institution Settings", icon: Building2 },
