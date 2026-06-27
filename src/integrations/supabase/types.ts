@@ -14,6 +14,185 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
+      climate_snapshots: {
+        Row: {
+          county: string
+          created_at: string
+          id: string
+          payload: Json
+          week_start: string
+        }
+        Insert: {
+          county: string
+          created_at?: string
+          id?: string
+          payload: Json
+          week_start: string
+        }
+        Update: {
+          county?: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          week_start?: string
+        }
+        Relationships: []
+      }
+      data_consents: {
+        Row: {
+          farmer_id: string
+          granted_at: string
+          id: string
+          lender_id: string | null
+          product_type: string | null
+          purpose: string | null
+          revoked_at: string | null
+          scope: Database["public"]["Enums"]["consent_scope"]
+        }
+        Insert: {
+          farmer_id: string
+          granted_at?: string
+          id?: string
+          lender_id?: string | null
+          product_type?: string | null
+          purpose?: string | null
+          revoked_at?: string | null
+          scope?: Database["public"]["Enums"]["consent_scope"]
+        }
+        Update: {
+          farmer_id?: string
+          granted_at?: string
+          id?: string
+          lender_id?: string | null
+          product_type?: string | null
+          purpose?: string | null
+          revoked_at?: string | null
+          scope?: Database["public"]["Enums"]["consent_scope"]
+        }
+        Relationships: []
+      }
+      data_products: {
+        Row: {
+          created_at: string
+          description: string | null
+          farmer_id: string
+          id: string
+          is_active: boolean
+          price_kes: number
+          product_type: string
+          refresh_cadence: string | null
+          sample: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          farmer_id: string
+          id?: string
+          is_active?: boolean
+          price_kes: number
+          product_type: string
+          refresh_cadence?: string | null
+          sample?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          farmer_id?: string
+          id?: string
+          is_active?: boolean
+          price_kes?: number
+          product_type?: string
+          refresh_cadence?: string | null
+          sample?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      data_purchases: {
+        Row: {
+          access_token: string | null
+          amount_kes: number
+          created_at: string
+          expires_at: string | null
+          farmer_id: string
+          id: string
+          lender_id: string
+          payload: Json | null
+          product_id: string
+          status: Database["public"]["Enums"]["purchase_status"]
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string | null
+          amount_kes: number
+          created_at?: string
+          expires_at?: string | null
+          farmer_id: string
+          id?: string
+          lender_id: string
+          payload?: Json | null
+          product_id: string
+          status?: Database["public"]["Enums"]["purchase_status"]
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string | null
+          amount_kes?: number
+          created_at?: string
+          expires_at?: string | null
+          farmer_id?: string
+          id?: string
+          lender_id?: string
+          payload?: Json | null
+          product_id?: string
+          status?: Database["public"]["Enums"]["purchase_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_purchases_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "data_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       farmer_profiles: {
         Row: {
           cooperative: string | null
@@ -173,6 +352,47 @@ export type Database = {
         }
         Relationships: []
       }
+      marketplace_payouts: {
+        Row: {
+          amount_kes: number
+          created_at: string
+          farmer_id: string
+          id: string
+          purchase_id: string | null
+          rail: string
+          reference: string | null
+          status: string
+        }
+        Insert: {
+          amount_kes: number
+          created_at?: string
+          farmer_id: string
+          id?: string
+          purchase_id?: string | null
+          rail?: string
+          reference?: string | null
+          status?: string
+        }
+        Update: {
+          amount_kes?: number
+          created_at?: string
+          farmer_id?: string
+          id?: string
+          purchase_id?: string | null
+          rail?: string
+          reference?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_payouts_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "data_purchases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -305,6 +525,54 @@ export type Database = {
         }
         Relationships: []
       }
+      ussd_sessions: {
+        Row: {
+          created_at: string
+          payload: Json
+          phone: string
+          session_id: string
+          step: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          payload?: Json
+          phone: string
+          session_id: string
+          step?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          payload?: Json
+          phone?: string
+          session_id?: string
+          step?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance_kes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance_kes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance_kes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -326,6 +594,7 @@ export type Database = {
         | "credit_manager"
         | "institution_admin"
         | "system_admin"
+      consent_scope: "one_off" | "pre_authorized"
       gender_type: "male" | "female" | "non_binary" | "prefer_not_to_say"
       institution_type:
         | "bank"
@@ -352,6 +621,10 @@ export type Database = {
         | "insurance"
         | "recommendation"
         | "system"
+        | "data_sold"
+        | "data_purchased"
+        | "trust_score_update"
+      purchase_status: "pending" | "active" | "expired" | "revoked" | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -486,6 +759,7 @@ export const Constants = {
         "institution_admin",
         "system_admin",
       ],
+      consent_scope: ["one_off", "pre_authorized"],
       gender_type: ["male", "female", "non_binary", "prefer_not_to_say"],
       institution_type: [
         "bank",
@@ -514,7 +788,11 @@ export const Constants = {
         "insurance",
         "recommendation",
         "system",
+        "data_sold",
+        "data_purchased",
+        "trust_score_update",
       ],
+      purchase_status: ["pending", "active", "expired", "revoked", "refunded"],
     },
   },
 } as const
