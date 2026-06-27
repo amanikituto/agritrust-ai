@@ -64,7 +64,7 @@ export const listAllApplications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("loan_applications")
-      .select("id, farmer_id, amount_kes, term_months, purpose, status, trust_score_snapshot, climate_risk_snapshot, ai_recommendation, ai_confidence, created_at")
+      .select("id, farmer_id, amount_kes, term_months, purpose, status, trust_score_snapshot, climate_risk_snapshot, ai_recommendation, ai_confidence, top_positive_factors, top_negative_factors, created_at")
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw error;
@@ -84,6 +84,151 @@ export const listAllApplications = createServerFn({ method: "GET" })
       gender: fMap.get(r.farmer_id)?.gender ?? null,
       has_disability: fMap.get(r.farmer_id)?.has_disability ?? false,
     }));
+  });
+
+export const getLenderPortfolioMetrics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const [{ data: applications, error: appError }, { data: farmers }] = await Promise.all([
+      context.supabase
+        .from("loan_applications")
+        .select("id, farmer_id, amount_kes, status, trust_score_snapshot, climate_risk_snapshot, ai_recommendation, ai_confidence, created_at")
+        .order("created_at", { ascending: true }),
+      context.supabase
+        .from("farmer_profiles")
+        .select("id, county, cooperative, gender, has_disability, crops, farm_size_acres, is_youth"),
+    ]);
+    if (appError) throw appError;
+
+    const apps = applications ?? [];
+    const farmerRows = farmers ?? [];
+    const farmerMap = new Map(farmerRows.map((f) => [f.id, f]));
+    const submitted = apps.length;
+    const approvedStatuses = new Set(["approved", "disbursed", "repaid"]);
+    const approved = apps.filter((a) => approvedStatuses.has(a.status)).length;
+    const rejected = apps.filter((a) => a.status === "rejected").length;
+    const review = apps.filter((a) => a.status === "submitted" || a.status === "under_review").length;
+    const portfolioValue = apps
+      .filter((a) => approvedStatuses.has(a.status))
+      .reduce((sum, a) => sum + Number(a.amount_kes ?? 0), 0);
+    const requestedValue = apps.reduce((sum, a) => sum + Number(a.amount_kes ?? 0), 0);
+    const scores = apps.map((a) => a.trust_score_snapshot).filter((v): v is number => typeof v === "number");
+    const usesHundredPointScale = scores.length === 0 || Math.max(...scores) <= 100;
+    const normalizeScore = (score: number) => usesHundredPointScale ? score : Math.round((score / 850) * 100);
+    const avgTrust = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+    const sortedScores = [...scores].sort((a, b) => a - b);
+    const medianTrust = sortedScores.length ? sortedScores[Math.floor(sortedScores.length / 2)] : 0;
+    const topDecile = sortedScores.length ? sortedScores[Math.max(0, Math.floor(sortedScores.length * 0.9) - 1)] : 0;
+    const atRisk = scores.filter((s) => normalizeScore(s) < 55).length;
+    const highClimate = apps.filter((a) => (a.climate_risk_snapshot ?? "").toLowerCase() === "high").length;
+    const defaultProxy = submitted ? Math.round(((rejected + apps.filter((a) => (a.ai_recommendation ?? "") === "decline").length * 0.5) / submitted) * 1000) / 10 : 0;
+    const approvalRate = submitted ? Math.round((approved / submitted) * 1000) / 10 : 0;
+    const womenFarmers = farmerRows.filter((f) => f.gender === "female").length;
+    const disabilityFarmers = farmerRows.filter((f) => f.has_disability).length;
+    const youthFarmers = farmerRows.filter((f) => f.is_youth).length;
+
+    const monthLabels: string[] = [];
+    const monthlyCounts: number[] = [];
+    const monthlyValue: number[] = [];
+    const monthlyApprovals: number[] = [];
+    const now = new Date();
+    for (let i = 11; i >= 0; i -= 1) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      monthLabels.push(d.toLocaleString("en", { month: "short" }).slice(0, 3));
+      const monthApps = apps.filter((a) => (a.created_at ?? "").slice(0, 7) === key);
+      monthlyCounts.push(monthApps.length);
+      monthlyApprovals.push(monthApps.filter((a) => approvedStatuses.has(a.status)).length);
+      monthlyValue.push(Math.round(monthApps.reduce((sum, a) => sum + Number(a.amount_kes ?? 0), 0) / 1_000_000));
+    }
+
+    const scoreBuckets = [0, 0, 0, 0, 0, 0];
+    for (const score of scores) {
+      const normalized = normalizeScore(score);
+      const idx = normalized >= 90 ? 5 : normalized >= 80 ? 4 : normalized >= 70 ? 3 : normalized >= 60 ? 2 : normalized >= 50 ? 1 : 0;
+      scoreBuckets[idx] += 1;
+    }
+
+    const cropCounts = new Map<string, number>();
+    for (const f of farmerRows) {
+      for (const crop of f.crops ?? []) cropCounts.set(crop, (cropCounts.get(crop) ?? 0) + 1);
+    }
+    const cropEntries = [...cropCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    const cropTotal = cropEntries.reduce((sum, [, value]) => sum + value, 0);
+    const cropMix = cropEntries.map(([label, value], i) => ({
+      label,
+      value: cropTotal ? Math.max(1, Math.round((value / cropTotal) * 100)) : 0,
+      color: ["var(--emerald)", "var(--sky)", "var(--gold)", "var(--violet)", "var(--rose)"][i],
+    }));
+
+    const countyStats = new Map<string, { applications: number; totalScore: number; scoreCount: number; highClimate: number; amount: number }>();
+    for (const a of apps) {
+      const f = farmerMap.get(a.farmer_id);
+      const county = f?.county ?? "Unknown";
+      const row = countyStats.get(county) ?? { applications: 0, totalScore: 0, scoreCount: 0, highClimate: 0, amount: 0 };
+      row.applications += 1;
+      row.amount += Number(a.amount_kes ?? 0);
+      if (typeof a.trust_score_snapshot === "number") {
+        row.totalScore += a.trust_score_snapshot;
+        row.scoreCount += 1;
+      }
+      if ((a.climate_risk_snapshot ?? "").toLowerCase() === "high") row.highClimate += 1;
+      countyStats.set(county, row);
+    }
+    const counties = [...countyStats.entries()].map(([name, s]) => ({
+      name,
+      applications: s.applications,
+      avgScore: s.scoreCount ? Math.round(s.totalScore / s.scoreCount) : 0,
+      climateRisk: s.applications ? Math.round((s.highClimate / s.applications) * 100) : 0,
+      amount: s.amount,
+    })).sort((a, b) => b.applications - a.applications).slice(0, 14);
+
+    const riskDistribution = [0, 0, 0, 0, 0, 0];
+    for (const a of apps) {
+      const score = normalizeScore(a.trust_score_snapshot ?? (usesHundredPointScale ? 60 : 600));
+      const climateAdd = (a.climate_risk_snapshot ?? "").toLowerCase() === "high" ? 0.12 : (a.climate_risk_snapshot ?? "").toLowerCase() === "medium" ? 0.06 : 0.02;
+      const pd = Math.max(0.01, Math.min(0.4, (75 - score) / 100 + climateAdd));
+      const bucket = Math.min(5, Math.max(0, Math.floor(pd / 0.07)));
+      riskDistribution[bucket] += 1;
+    }
+
+    const watchlist = [
+      { title: "High-value applications > KES 250k", count: apps.filter((a) => Number(a.amount_kes) > 250_000 && !approvedStatuses.has(a.status)).length, tone: "gold" as const, href: "/lender/applications" },
+      { title: "High climate-risk applications", count: highClimate, tone: "rose" as const, href: "/lender/climate" },
+      { title: "At-risk trust scores < 600", count: atRisk, tone: "gold" as const, href: "/lender/trust" },
+      { title: "Manual review queue", count: review, tone: "sky" as const, href: "/lender/applications" },
+    ];
+
+    return {
+      submitted,
+      approved,
+      rejected,
+      review,
+      portfolioValue,
+      requestedValue,
+      approvalRate,
+      defaultProxy,
+      avgTrust,
+      medianTrust,
+      topDecile,
+      atRisk,
+      highClimate,
+      farmerCount: farmerRows.length,
+      womenPct: farmerRows.length ? Math.round((womenFarmers / farmerRows.length) * 100) : 0,
+      disabilityPct: farmerRows.length ? Math.round((disabilityFarmers / farmerRows.length) * 100) : 0,
+      youthPct: farmerRows.length ? Math.round((youthFarmers / farmerRows.length) * 100) : 0,
+      monthLabels,
+      monthlyCounts,
+      monthlyValue,
+      monthlyApprovals,
+      scoreBuckets,
+      cropMix: cropMix.length ? cropMix : [{ label: "No crop data", value: 1, color: "var(--emerald)" }],
+      counties,
+      riskDistribution,
+      watchlist,
+    };
   });
 
 export const getApplication = createServerFn({ method: "GET" })

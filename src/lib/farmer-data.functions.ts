@@ -81,13 +81,14 @@ export const getFarmerDetail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
-    const [{ data: profile }, { data: farmer }, { data: ts }, { data: loans }] = await Promise.all([
+    const [{ data: profile }, { data: farmer }, { data: ts }, { data: scoreHistory }, { data: loans }] = await Promise.all([
       context.supabase.from("profiles").select("full_name, email, phone").eq("id", data.id).maybeSingle(),
       context.supabase.from("farmer_profiles").select("*").eq("id", data.id).maybeSingle(),
       context.supabase.from("trust_scores").select("*").eq("farmer_id", data.id).order("computed_at", { ascending: false }).limit(1).maybeSingle(),
+      context.supabase.from("trust_scores").select("score, computed_at").eq("farmer_id", data.id).order("computed_at", { ascending: true }).limit(12),
       context.supabase.from("loan_applications").select("id, amount_kes, status, created_at").eq("farmer_id", data.id).order("created_at", { ascending: false }).limit(10),
     ]);
-    return { profile, farmer, trust: ts, loans: loans ?? [] };
+    return { profile, farmer, trust: ts, trustHistory: scoreHistory ?? [], loans: loans ?? [] };
   });
 
 export const myNotifications = createServerFn({ method: "GET" })

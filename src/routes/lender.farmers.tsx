@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Accessibility, Search, SlidersHorizontal } from "lucide-react";
@@ -16,6 +16,14 @@ function FarmersDirectory() {
 
   const [q, setQ] = useState("");
   const [climate, setClimate] = useState<string>("All");
+
+  useEffect(() => {
+    const pending = sessionStorage.getItem("agritrust:dashboard-search");
+    if (pending) {
+      setQ(pending);
+      sessionStorage.removeItem("agritrust:dashboard-search");
+    }
+  }, []);
 
   const list = useMemo(() => {
     return (farmers.data ?? []).filter(

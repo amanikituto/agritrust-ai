@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from "react";
+import { useState, type ComponentType, type ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 
 export type Tone = "emerald" | "sky" | "gold" | "rose" | "violet";
@@ -124,17 +124,23 @@ export function Sparkline({
   labels?: string[];
   color?: string;
 }) {
+  const [active, setActive] = useState<number | null>(null);
   const w = 600;
   const h = 160;
   const min = Math.min(...data);
   const max = Math.max(...data);
-  const step = w / (data.length - 1);
-  const points = data
-    .map((v, i) => `${i * step},${h - ((v - min) / (max - min || 1)) * (h - 20) - 10}`)
-    .join(" ");
+  const step = data.length > 1 ? w / (data.length - 1) : w;
+  const pointList = data.map((v, i) => ({
+    x: data.length > 1 ? i * step : w / 2,
+    y: h - ((v - min) / (max - min || 1)) * (h - 20) - 10,
+    value: v,
+    label: labels?.[i] ?? `Point ${i + 1}`,
+  }));
+  const points = pointList.map((p) => `${p.x},${p.y}`).join(" ");
   const gradId = `spark-${color.replace(/\W/g, "")}`;
+  const activePoint = active == null ? null : pointList[active];
   return (
-    <svg viewBox={`0 0 ${w} ${h + 20}`} className="w-full">
+    <svg viewBox={`0 0 ${w} ${h + 28}`} className="w-full" role="img" aria-label="Interactive trend chart">
       <defs>
         <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor={color} stopOpacity="0.4" />
@@ -150,6 +156,22 @@ export function Sparkline({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      {pointList.map((p, i) => (
+        <g key={`point-${i}`} onMouseEnter={() => setActive(i)} onMouseLeave={() => setActive(null)} onClick={() => setActive(active === i ? null : i)} className="cursor-pointer">
+          <circle cx={p.x} cy={p.y} r={active === i ? 6 : 4} fill={active === i ? color : "var(--background)"} stroke={color} strokeWidth="2" />
+          <circle cx={p.x} cy={p.y} r="13" fill="transparent">
+            <title>{`${p.label}: ${p.value.toLocaleString()}`}</title>
+          </circle>
+        </g>
+      ))}
+      {activePoint && (
+        <g>
+          <line x1={activePoint.x} x2={activePoint.x} y1="8" y2={h} stroke="currentColor" strokeOpacity="0.12" strokeDasharray="3 3" />
+          <rect x={Math.min(Math.max(activePoint.x - 54, 4), w - 108)} y="6" width="108" height="34" rx="8" fill="var(--surface-elevated)" stroke="currentColor" strokeOpacity="0.15" />
+          <text x={Math.min(Math.max(activePoint.x, 58), w - 58)} y="20" textAnchor="middle" fontSize="10" fill="currentColor" className="text-muted-foreground">{activePoint.label}</text>
+          <text x={Math.min(Math.max(activePoint.x, 58), w - 58)} y="34" textAnchor="middle" fontSize="12" fontWeight="700" fill="currentColor">{activePoint.value.toLocaleString()}</text>
+        </g>
+      )}
       {labels?.map((l, i) => (
         <text
           key={i}
@@ -170,23 +192,44 @@ export function Sparkline({
 export function Bars({
   data,
   color = "oklch(0.78 0.13 230 / 0.85)",
+  labels,
 }: {
   data: number[];
   color?: string;
+  labels?: string[];
 }) {
+  const [selected, setSelected] = useState<number | null>(null);
   const w = 300;
   const h = 160;
-  const max = Math.max(...data);
+  const max = Math.max(...data, 1);
   const bw = (w - 10) / data.length;
+  const selectedValue = selected == null ? null : data[selected];
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full">
+    <div>
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full" role="img" aria-label="Interactive bar chart">
       {data.map((v, i) => {
         const bh = (v / max) * (h - 20);
         return (
-          <rect key={i} x={i * bw + 4} y={h - bh} width={bw - 6} height={bh} rx="3" fill={color} />
+          <g key={i} onMouseEnter={() => setSelected(i)} onClick={() => setSelected(selected === i ? null : i)} className="cursor-pointer">
+            <rect x={i * bw + 4} y={h - bh} width={bw - 6} height={bh} rx="3" fill={color} opacity={selected == null || selected === i ? 1 : 0.35} />
+            <rect x={i * bw + 4} y={0} width={bw - 6} height={h} fill="transparent">
+              <title>{`${labels?.[i] ?? `Bar ${i + 1}`}: ${v.toLocaleString()}`}</title>
+            </rect>
+            {selected === i && (
+              <text x={i * bw + bw / 2} y={Math.max(12, h - bh - 8)} textAnchor="middle" fontSize="10" fontWeight="700" fill="currentColor">
+                {v.toLocaleString()}
+              </text>
+            )}
+          </g>
         );
       })}
     </svg>
+    {selectedValue != null && (
+      <div className="-mt-1 text-center text-xs text-muted-foreground">
+        {labels?.[selected!] ?? `Selected ${selected! + 1}`}: <span className="font-semibold text-foreground">{selectedValue.toLocaleString()}</span>
+      </div>
+    )}
+    </div>
   );
 }
 
@@ -259,13 +302,15 @@ export function Donut({
   segments: { label: string; value: number; color: string }[];
   size?: number;
 }) {
+  const [active, setActive] = useState(0);
   const total = segments.reduce((s, v) => s + v.value, 0);
   const r = size / 2 - 12;
   const c = 2 * Math.PI * r;
   let acc = 0;
+  const activeSegment = segments[active];
   return (
     <div className="flex items-center gap-5">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" role="img" aria-label="Interactive donut chart">
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="oklch(1 0 0 / 0.06)" strokeWidth="14" />
         {segments.map((s, i) => {
           const len = (s.value / total) * c;
@@ -284,17 +329,28 @@ export function Donut({
               strokeDasharray={`${len} ${c}`}
               strokeDashoffset={off}
               strokeLinecap="butt"
+              opacity={active === i ? 1 : 0.45}
+              onMouseEnter={() => setActive(i)}
+              onClick={() => setActive(i)}
+              className="cursor-pointer transition-opacity"
               style={{ transform: `rotate(${rot}deg)`, transformOrigin: "center" }}
             />
           );
         })}
+        {activeSegment && (
+          <text x={size / 2} y={size / 2 + 4} textAnchor="middle" fontSize="18" fontWeight="800" fill="currentColor" className="rotate-90 origin-center text-foreground">
+            {Math.round((activeSegment.value / total) * 100)}%
+          </text>
+        )}
       </svg>
       <ul className="space-y-1.5 text-xs">
-        {segments.map((s) => (
-          <li key={s.label} className="flex items-center gap-2">
+        {segments.map((s, i) => (
+          <li key={s.label}>
+          <button type="button" onMouseEnter={() => setActive(i)} onClick={() => setActive(i)} className={`flex w-full items-center gap-2 rounded-md px-1.5 py-1 text-left transition ${active === i ? "bg-surface-elevated text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
             <span className="h-2.5 w-2.5 rounded-sm" style={{ background: s.color }} />
-            <span className="text-muted-foreground">{s.label}</span>
+            <span>{s.label}</span>
             <span className="ml-auto font-semibold text-foreground">{s.value}%</span>
+          </button>
           </li>
         ))}
       </ul>
@@ -381,8 +437,9 @@ export function NetworkGraph({
   nodes,
 }: {
   centerLabel?: string;
-  nodes?: { label: string; type?: string }[];
+  nodes?: { label: string; type?: string; rel?: string; id?: string }[];
 }) {
+  const [selected, setSelected] = useState<number | null>(null);
   const items = (nodes && nodes.length ? nodes : [
     { label: "Cooperative", type: "Cooperative" },
     { label: "Bank", type: "Lender" },
@@ -396,20 +453,24 @@ export function NetworkGraph({
   const cx = 250;
   const cy = 200;
   const radius = 140;
+  const selectedNode = selected == null ? null : items[selected];
   return (
-    <svg viewBox="0 0 500 400" className="w-full">
+    <div>
+    <svg viewBox="0 0 500 400" className="w-full" role="img" aria-label="Interactive relationship graph">
       {items.map((n, i) => {
         const a = (i / items.length) * Math.PI * 2 - Math.PI / 2;
         const x = cx + radius * Math.cos(a);
         const y = cy + radius * Math.sin(a);
         const color = TYPE_COLOR[n.type ?? ""] ?? "var(--emerald)";
+        const isSelected = selected === i;
         return (
-          <g key={`${n.label}-${i}`}>
-            <line x1={cx} y1={cy} x2={x} y2={y} stroke={color} strokeOpacity="0.35" strokeWidth="1.2" strokeDasharray="4 4" />
-            <circle cx={x} cy={y} r="22" fill={color} fillOpacity="0.18" stroke={color} strokeWidth="1.5" />
+          <g key={`${n.label}-${i}`} onMouseEnter={() => setSelected(i)} onClick={() => setSelected(selected === i ? null : i)} className="cursor-pointer">
+            <line x1={cx} y1={cy} x2={x} y2={y} stroke={color} strokeOpacity={isSelected ? "0.85" : "0.35"} strokeWidth={isSelected ? "2.5" : "1.2"} strokeDasharray="4 4" />
+            <circle cx={x} cy={y} r={isSelected ? "28" : "22"} fill={color} fillOpacity={isSelected ? "0.28" : "0.18"} stroke={color} strokeWidth={isSelected ? "2.5" : "1.5"} />
             <text x={x} y={y + 4} textAnchor="middle" fontSize="10" fill="currentColor" className="text-foreground">
               {n.label.length > 14 ? n.label.slice(0, 13) + "…" : n.label}
             </text>
+            <title>{`${centerLabel} ${n.rel ?? "CONNECTED_TO"} ${n.label} (${n.type ?? "Node"})`}</title>
           </g>
         );
       })}
@@ -418,5 +479,19 @@ export function NetworkGraph({
         {centerLabel.length > 12 ? centerLabel.slice(0, 11) + "…" : centerLabel}
       </text>
     </svg>
+    <div className="mt-3 rounded-xl bg-surface-elevated/60 p-3 text-sm">
+      {selectedNode ? (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <div className="font-semibold">{selectedNode.label}</div>
+            <div className="text-xs text-muted-foreground">{selectedNode.type ?? "Node"} · {selectedNode.rel ?? "CONNECTED_TO"}</div>
+          </div>
+          <span className="rounded-full bg-emerald/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald">Selected</span>
+        </div>
+      ) : (
+        <span className="text-xs text-muted-foreground">Hover or click a node to inspect its relationship.</span>
+      )}
+    </div>
+    </div>
   );
 }
