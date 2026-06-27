@@ -50,12 +50,12 @@ function FarmerOverview() {
         sub="Your farm is becoming more credit-ready."
         right={
           <div className="flex flex-wrap items-center gap-2">
-            <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
+            <Link to="/farmer/loans" className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
               <PlusCircle className="h-4 w-4" /> Apply for loan
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-xl glass-strong px-4 py-2.5 text-sm font-semibold transition hover:bg-surface-elevated">
+            </Link>
+            <Link to="/farmer/assistant" className="inline-flex items-center gap-2 rounded-xl glass-strong px-4 py-2.5 text-sm font-semibold transition hover:bg-surface-elevated">
               <Mic className="h-4 w-4" /> Ask AI
-            </button>
+            </Link>
           </div>
         }
       />
