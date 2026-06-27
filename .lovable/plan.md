@@ -1,75 +1,45 @@
-# Plan: Lender visibility fix + Masumi agent-to-agent flow
+## Goal
 
-Three tracks, smallest-first so each is verifiable on its own.
+Make the lender Applications "Review" button drive a Masumi-mediated agent-to-agent flow: Lender Agent discovers and pays the AgriTrust Agent → AgriTrust queries Neo4j + Supabase → credit profile is unlocked and shown in the review workspace. Retire the standalone "AgriTrust Agent" page and the "Data Marketplace" page since this flow replaces them.
 
----
+## User-visible behavior
 
-## Track 1 — Lenders don't see newly registered farmers
+1. On `/lender/applications`, each row's **Review** button opens `/lender/applications/$id`.
+2. The review page loads the application + farmer summary, but the credit profile section is **locked** behind a paywall card showing:
+   - Tier selector (Basic / Standard / Premium) with KES pricing from Masumi discovery
+   - "Pay with Masumi & Unlock" CTA
+   - Short explainer: "Your Lender Agent will discover and pay the AgriTrust Agent via Masumi escrow"
+3. Clicking the CTA runs the existing `lenderRequestFarmerProfile` server fn, which:
+   - Calls Masumi discovery to resolve the AgriTrust agent (no hardcoded endpoint)
+   - Opens escrow → invokes AgriTrust Agent → AgriTrust queries Neo4j + Supabase → returns signed profile
+   - Records the job in `agent_jobs` (already wired)
+4. On success the page swaps the locked card for the **unlocked credit profile**: trust score gauge, positive/negative factors, Neo4j relationship signals (if Premium), escrow tx hash + explorer link + signed receipt.
+5. Approve / Reject / Request-info buttons remain, now enriched by the unlocked profile (and disabled until unlocked, with a "Decision requires profile" hint).
+6. If the lender has already purchased a profile for this farmer (lookup in `agent_jobs` by `buyer_id + farmer_id`), skip payment and show the cached result with a "Previously purchased" badge.
 
-**Root cause (most likely):**
-1. `farmer_profiles` / `profiles` RLS only allows the owner to `SELECT` their own row, so lender accounts get an empty list.
-2. `listFarmersDirectory` and `getFarmerDetail` run through `requireSupabaseAuth` (user-scoped client), so RLS silently filters everything out.
-3. New signups create a `profiles` row but no `farmer_profiles` row until the farmer opens onboarding, so even with correct RLS the directory misses them.
+## Navigation & cleanup
 
-**Fix:**
-- Add a SQL migration:
-  - Policy: `authenticated` with `has_role(auth.uid(), 'lender')` can `SELECT` from `profiles`, `farmer_profiles`, `trust_scores`, `loan_applications`.
-  - Trigger on `auth.users` insert (or extend the existing one) so every new user with `account_type='farmer'` gets a stub `farmer_profiles` row.
-  - Confirm `GRANT SELECT ... TO authenticated` exists for each table.
-- In `listFarmersDirectory` / `getFarmerDetail`, keep the user-scoped client (RLS now permits it) and `LEFT JOIN` profiles so farmers without a trust score still appear with "—".
-- Show a tag in the directory when `farmer_profiles` is missing ("Onboarding incomplete") instead of hiding the row.
+- Remove sidebar entries **AgriTrust Agent** (`/lender/agent`) and **Data Marketplace** (`/lender/marketplace`) from `src/lib/dashboard-nav.ts`.
+- Delete routes `src/routes/lender.agent.tsx` and `src/routes/lender.marketplace.tsx`.
+- Keep `src/lib/agent.functions.ts`, `masumi.server.ts`, `agritrust-agent.server.ts`, and the `/api/public/agent/*` endpoints — they are the engine for the new flow.
+- Leave `farmer.marketplace.tsx` (farmer side) untouched unless you want it removed too — see Question 1.
 
-## Track 2 — Broken lender buttons / inputs
+## Files to edit / create
 
-Audit pass across `src/routes/lender.*.tsx`:
-- Replace any `<button>` without `onClick` and any link styled as a button that doesn't navigate.
-- Wire filter chips on `lender.applications.tsx`, `lender.portfolio.tsx`, `lender.risk.tsx`, `lender.trust.tsx` to local state that actually filters the rendered list.
-- Make report downloads in `lender.reports.tsx` produce a file (Blob + `URL.createObjectURL`) instead of being inert.
-- Make the assistant drawer submit on Enter and disable while pending.
-- For each fixed control, drive Playwright via shell against the running preview to click it and screenshot the result.
+- `src/routes/lender.applications.tsx` — ensure each row's Review button is a `<Link to="/lender/applications/$id" params={{ id }}>`.
+- `src/routes/lender.applications.$id.tsx` — add the Masumi paywall card, gated profile display, "already purchased" detection, escrow receipt panel; gate decision buttons.
+- `src/lib/agent.functions.ts` — add `getExistingAgentJob({ farmerId })` so the review page can detect prior purchases.
+- `src/lib/dashboard-nav.ts` — remove the two nav items.
+- Delete `src/routes/lender.agent.tsx`, `src/routes/lender.marketplace.tsx`.
 
-(Exact button list will be enumerated during the audit pass — I'll list every file touched in the build summary.)
+No DB migration is needed; `agent_jobs` already stores `result`, `escrow_tx`, `explorer_url`, `outbound_tx`, `is_mocked`.
 
-## Track 3 — Masumi agent-to-agent payment (Lender Agent → AgriTrust Agent)
+## Technical notes
 
-Keep it inside the existing TanStack Start app — no separate Python service.
+- Discovery stays inside `payAndInvoke` via `getAgritrustAgentInfo()`; the lender code never imports AgriTrust internals — only calls the Masumi-mediated server fn. This satisfies the "no hardcoded API" requirement.
+- Pricing pulled from `listAgentInfo()` on mount so the tier card always reflects current Masumi tariffs.
+- Cached purchase lookup uses RLS-scoped `agent_jobs` query (buyer = current lender user).
 
-**New modules**
-- `src/lib/masumi.server.ts` — thin client wrapper:
-  - `discoverAgent(capability)` → calls Masumi registry, returns `{ agentId, endpoint, pricing }`.
-  - `payAndInvoke({ agentId, payload, tierKes })` → creates a Masumi job, returns `{ jobId, escrowTx, explorerUrl, result }`. Mocked by default; real SDK call gated on `MASUMI_API_KEY`.
-  - `verifyMasumiSignature(req)` for inbound calls.
-- `src/lib/agritrust-agent.server.ts` — the seller side. Given `{ farmerId, tier }`, reads Neo4j (`runQuery`) + Supabase to assemble a tiered credit-intelligence payload (basic / standard / premium), runs the existing trust-score weights, returns DTO + signed receipt.
+## Question
 
-**New routes**
-- `src/routes/api/public/agent/discover.ts` — GET, returns AgriTrust agent metadata for Masumi discovery.
-- `src/routes/api/public/agent/invoke.ts` — POST, verifies Masumi signature, then calls `agritrust-agent.server.ts`. Returns the credit profile + a second mocked Masumi tx for the outbound climate-data agent call (demonstrating agent-to-agent payment).
-- `src/lib/agent.functions.ts` — `lenderRequestFarmerProfile({ farmerId, tier })`: server fn used by the lender UI. Internally calls `discoverAgent('agritrust.credit')` then `payAndInvoke(...)`.
-
-**New UI**
-- `src/routes/lender.agent.tsx` — "AgriTrust Marketplace" page: pick a farmer + tier, see price in KES, click **Pay & fetch** → shows job id, escrow tx (linked to explorer), and the returned credit profile with an "Audit verified" badge.
-- Embed a small "Request via AgriTrust Agent" button on `lender.farmers.$id.tsx` that runs the same flow inline.
-- Public `src/routes/agent.tsx` discovery page (read-only marketing/description, links to the discover endpoint).
-
-**Secrets / config**
-- Add `MASUMI_API_KEY`, `MASUMI_AGENT_ID`, `MASUMI_NETWORK` (preprod/mainnet) as runtime secrets — when missing, the wrapper runs in mocked mode and clearly labels responses `MOCKED`.
-- All Neo4j and Supabase reads continue to use existing credentials.
-
-**Trust score**
-- Add a parallel `computeMasumiScore` in `src/lib/trust-score.functions.ts` using the Masumi weights (mobile_money 0.25, coop 0.25, repayment 0.35, farm_data 0.15, minus climate penalty). Existing dashboard score is unchanged. Only the agent endpoint returns the Masumi score.
-
-**Error handling**
-- Every new endpoint returns JSON `{ error, code }` with proper HTTP status on bad input, missing farmer, signature failure, payment failure.
-
----
-
-## Verification
-
-- Migration applied → query `farmer_profiles` as a lender via `supabase--read_query`.
-- Playwright: sign in as lender, open `/lender/farmers`, confirm a freshly registered farmer appears. Click each repaired button, screenshot.
-- `stack_modern--invoke-server-function` to hit `/api/public/agent/discover` and `/api/public/agent/invoke` with a mocked Masumi signature; confirm both Masumi tx ids appear in the response.
-
-## Open questions (will not block — sensible defaults chosen)
-
-- Masumi credentials: defaulting to **mocked end-to-end with SDK adapter ready** unless you paste a `MASUMI_API_KEY`.
-- Pricing tiers: defaulting to KES 50 / 150 / 400 (basic / standard / premium) — easy to change later.
+1. Should I also remove the **farmer-side** "Data Marketplace" route (`/farmer/marketplace`) and its nav entry, or keep it as the farmer's consent/earnings view? Default: keep it (farmers still need to see what was sold and earnings).
