@@ -49,30 +49,13 @@ async function loadNeoSignals(farmerId: string) {
 
 export async function buildAgritrustProfile(
   args: BuildArgs,
-  supabase: {
-    from: (t: string) => {
-      select: (s: string) => {
-        eq: (
-          c: string,
-          v: string,
-        ) => {
-          maybeSingle: () => Promise<{ data: Record<string, unknown> | null }>;
-        };
-      };
-    };
-  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
 ): Promise<AgritrustProfile> {
   const [{ data: profile }, { data: farmer }, { data: loansRows }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", args.farmerId).maybeSingle(),
     supabase.from("farmer_profiles").select("*").eq("id", args.farmerId).maybeSingle(),
-    (supabase as unknown as {
-      from: (t: string) => {
-        select: (s: string) => { eq: (c: string, v: string) => Promise<{ data: Array<{ status: string }> | null }> };
-      };
-    })
-      .from("loan_applications")
-      .select("status")
-      .eq("farmer_id", args.farmerId),
+    supabase.from("loan_applications").select("status").eq("farmer_id", args.farmerId),
   ]);
 
   const loans = (loansRows ?? []) as Array<{ status: string }>;

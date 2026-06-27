@@ -45,6 +45,8 @@ import { Route as FarmerAnalyticsRouteImport } from './routes/farmer.analytics'
 import { Route as LenderFarmersIdRouteImport } from './routes/lender.farmers.$id'
 import { Route as LenderApplicationsIdRouteImport } from './routes/lender.applications.$id'
 import { Route as ApiPublicUssdRouteImport } from './routes/api/public/ussd'
+import { Route as ApiPublicAgentInvokeRouteImport } from './routes/api/public/agent/invoke'
+import { Route as ApiPublicAgentDiscoverRouteImport } from './routes/api/public/agent/discover'
 
 const LenderRoute = LenderRouteImport.update({
   id: '/lender',
@@ -226,6 +228,16 @@ const ApiPublicUssdRoute = ApiPublicUssdRouteImport.update({
   path: '/api/public/ussd',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAgentInvokeRoute = ApiPublicAgentInvokeRouteImport.update({
+  id: '/api/public/agent/invoke',
+  path: '/api/public/agent/invoke',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentDiscoverRoute = ApiPublicAgentDiscoverRouteImport.update({
+  id: '/api/public/agent/discover',
+  path: '/api/public/agent/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -264,6 +276,8 @@ export interface FileRoutesByFullPath {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
+  '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -300,6 +314,8 @@ export interface FileRoutesByTo {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
+  '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -339,6 +355,8 @@ export interface FileRoutesById {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
+  '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -379,6 +397,8 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/api/public/agent/discover'
+    | '/api/public/agent/invoke'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -415,6 +435,8 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/api/public/agent/discover'
+    | '/api/public/agent/invoke'
   id:
     | '__root__'
     | '/'
@@ -453,6 +475,8 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/api/public/agent/discover'
+    | '/api/public/agent/invoke'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -461,6 +485,8 @@ export interface RootRouteChildren {
   FarmerRoute: typeof FarmerRouteWithChildren
   LenderRoute: typeof LenderRouteWithChildren
   ApiPublicUssdRoute: typeof ApiPublicUssdRoute
+  ApiPublicAgentDiscoverRoute: typeof ApiPublicAgentDiscoverRoute
+  ApiPublicAgentInvokeRoute: typeof ApiPublicAgentInvokeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -717,6 +743,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUssdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/agent/invoke': {
+      id: '/api/public/agent/invoke'
+      path: '/api/public/agent/invoke'
+      fullPath: '/api/public/agent/invoke'
+      preLoaderRoute: typeof ApiPublicAgentInvokeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/discover': {
+      id: '/api/public/agent/discover'
+      path: '/api/public/agent/discover'
+      fullPath: '/api/public/agent/discover'
+      preLoaderRoute: typeof ApiPublicAgentDiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -825,6 +865,8 @@ const rootRouteChildren: RootRouteChildren = {
   FarmerRoute: FarmerRouteWithChildren,
   LenderRoute: LenderRouteWithChildren,
   ApiPublicUssdRoute: ApiPublicUssdRoute,
+  ApiPublicAgentDiscoverRoute: ApiPublicAgentDiscoverRoute,
+  ApiPublicAgentInvokeRoute: ApiPublicAgentInvokeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
