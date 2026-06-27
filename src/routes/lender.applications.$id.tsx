@@ -120,7 +120,7 @@ function DecisionWorkspace() {
     },
   });
 
-  const price = info.data?.pricing[tier] ?? 0;
+  const price = info.data?.pricing[tier] ?? FALLBACK_PRICING[tier];
   const isUnlocked = !!unlocked;
   const wasCached = isUnlocked && !buy.data && !!existing.data;
 
