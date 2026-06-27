@@ -39,7 +39,7 @@ export const applyForLoan = createServerFn({ method: "POST" })
 
     await context.supabase.from("notifications").insert({
       user_id: context.userId,
-      type: "loan_update",
+      type: "loan_approval",
       title: "Loan application submitted",
       body: `KES ${data.amount_kes.toLocaleString()} · ${data.term_months} months · AI: ${rec}`,
     });
@@ -122,7 +122,7 @@ export const decideApplication = createServerFn({ method: "POST" })
 
     await context.supabase.from("notifications").insert({
       user_id: row.farmer_id,
-      type: "loan_update",
+      type: "loan_approval",
       title: `Loan ${data.decision}`,
       body: data.notes ?? `Your application was ${data.decision}.`,
     });
