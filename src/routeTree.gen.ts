@@ -13,6 +13,35 @@ import { Route as LenderRouteImport } from './routes/lender'
 import { Route as FarmerRouteImport } from './routes/farmer'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LenderIndexRouteImport } from './routes/lender.index'
+import { Route as FarmerIndexRouteImport } from './routes/farmer.index'
+import { Route as LenderTrustRouteImport } from './routes/lender.trust'
+import { Route as LenderSettingsRouteImport } from './routes/lender.settings'
+import { Route as LenderRiskRouteImport } from './routes/lender.risk'
+import { Route as LenderReportsRouteImport } from './routes/lender.reports'
+import { Route as LenderPortfolioRouteImport } from './routes/lender.portfolio'
+import { Route as LenderNotificationsRouteImport } from './routes/lender.notifications'
+import { Route as LenderGraphRouteImport } from './routes/lender.graph'
+import { Route as LenderFarmersRouteImport } from './routes/lender.farmers'
+import { Route as LenderExplainabilityRouteImport } from './routes/lender.explainability'
+import { Route as LenderClimateRouteImport } from './routes/lender.climate'
+import { Route as LenderAssistantRouteImport } from './routes/lender.assistant'
+import { Route as LenderApplicationsRouteImport } from './routes/lender.applications'
+import { Route as FarmerTrustScoreRouteImport } from './routes/farmer.trust-score'
+import { Route as FarmerSettingsRouteImport } from './routes/farmer.settings'
+import { Route as FarmerReportsRouteImport } from './routes/farmer.reports'
+import { Route as FarmerProfileRouteImport } from './routes/farmer.profile'
+import { Route as FarmerNotificationsRouteImport } from './routes/farmer.notifications'
+import { Route as FarmerNetworkRouteImport } from './routes/farmer.network'
+import { Route as FarmerLoansRouteImport } from './routes/farmer.loans'
+import { Route as FarmerFarmRouteImport } from './routes/farmer.farm'
+import { Route as FarmerCreditRouteImport } from './routes/farmer.credit'
+import { Route as FarmerCooperativeRouteImport } from './routes/farmer.cooperative'
+import { Route as FarmerClimateRouteImport } from './routes/farmer.climate'
+import { Route as FarmerAssistantRouteImport } from './routes/farmer.assistant'
+import { Route as FarmerAnalyticsRouteImport } from './routes/farmer.analytics'
+import { Route as LenderFarmersIdRouteImport } from './routes/lender.farmers.$id'
+import { Route as LenderApplicationsIdRouteImport } from './routes/lender.applications.$id'
 
 const LenderRoute = LenderRouteImport.update({
   id: '/lender',
@@ -34,39 +63,367 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LenderIndexRoute = LenderIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LenderRoute,
+} as any)
+const FarmerIndexRoute = FarmerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const LenderTrustRoute = LenderTrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderSettingsRoute = LenderSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderRiskRoute = LenderRiskRouteImport.update({
+  id: '/risk',
+  path: '/risk',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderReportsRoute = LenderReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderPortfolioRoute = LenderPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderNotificationsRoute = LenderNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderGraphRoute = LenderGraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderFarmersRoute = LenderFarmersRouteImport.update({
+  id: '/farmers',
+  path: '/farmers',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderExplainabilityRoute = LenderExplainabilityRouteImport.update({
+  id: '/explainability',
+  path: '/explainability',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderClimateRoute = LenderClimateRouteImport.update({
+  id: '/climate',
+  path: '/climate',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderAssistantRoute = LenderAssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => LenderRoute,
+} as any)
+const LenderApplicationsRoute = LenderApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => LenderRoute,
+} as any)
+const FarmerTrustScoreRoute = FarmerTrustScoreRouteImport.update({
+  id: '/trust-score',
+  path: '/trust-score',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerSettingsRoute = FarmerSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerReportsRoute = FarmerReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerProfileRoute = FarmerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerNotificationsRoute = FarmerNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerNetworkRoute = FarmerNetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerLoansRoute = FarmerLoansRouteImport.update({
+  id: '/loans',
+  path: '/loans',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerFarmRoute = FarmerFarmRouteImport.update({
+  id: '/farm',
+  path: '/farm',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerCreditRoute = FarmerCreditRouteImport.update({
+  id: '/credit',
+  path: '/credit',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerCooperativeRoute = FarmerCooperativeRouteImport.update({
+  id: '/cooperative',
+  path: '/cooperative',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerClimateRoute = FarmerClimateRouteImport.update({
+  id: '/climate',
+  path: '/climate',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerAssistantRoute = FarmerAssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerAnalyticsRoute = FarmerAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const LenderFarmersIdRoute = LenderFarmersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => LenderFarmersRoute,
+} as any)
+const LenderApplicationsIdRoute = LenderApplicationsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => LenderApplicationsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/farmer': typeof FarmerRoute
-  '/lender': typeof LenderRoute
+  '/farmer': typeof FarmerRouteWithChildren
+  '/lender': typeof LenderRouteWithChildren
+  '/farmer/analytics': typeof FarmerAnalyticsRoute
+  '/farmer/assistant': typeof FarmerAssistantRoute
+  '/farmer/climate': typeof FarmerClimateRoute
+  '/farmer/cooperative': typeof FarmerCooperativeRoute
+  '/farmer/credit': typeof FarmerCreditRoute
+  '/farmer/farm': typeof FarmerFarmRoute
+  '/farmer/loans': typeof FarmerLoansRoute
+  '/farmer/network': typeof FarmerNetworkRoute
+  '/farmer/notifications': typeof FarmerNotificationsRoute
+  '/farmer/profile': typeof FarmerProfileRoute
+  '/farmer/reports': typeof FarmerReportsRoute
+  '/farmer/settings': typeof FarmerSettingsRoute
+  '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/lender/applications': typeof LenderApplicationsRouteWithChildren
+  '/lender/assistant': typeof LenderAssistantRoute
+  '/lender/climate': typeof LenderClimateRoute
+  '/lender/explainability': typeof LenderExplainabilityRoute
+  '/lender/farmers': typeof LenderFarmersRouteWithChildren
+  '/lender/graph': typeof LenderGraphRoute
+  '/lender/notifications': typeof LenderNotificationsRoute
+  '/lender/portfolio': typeof LenderPortfolioRoute
+  '/lender/reports': typeof LenderReportsRoute
+  '/lender/risk': typeof LenderRiskRoute
+  '/lender/settings': typeof LenderSettingsRoute
+  '/lender/trust': typeof LenderTrustRoute
+  '/farmer/': typeof FarmerIndexRoute
+  '/lender/': typeof LenderIndexRoute
+  '/lender/applications/$id': typeof LenderApplicationsIdRoute
+  '/lender/farmers/$id': typeof LenderFarmersIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/farmer': typeof FarmerRoute
-  '/lender': typeof LenderRoute
+  '/farmer/analytics': typeof FarmerAnalyticsRoute
+  '/farmer/assistant': typeof FarmerAssistantRoute
+  '/farmer/climate': typeof FarmerClimateRoute
+  '/farmer/cooperative': typeof FarmerCooperativeRoute
+  '/farmer/credit': typeof FarmerCreditRoute
+  '/farmer/farm': typeof FarmerFarmRoute
+  '/farmer/loans': typeof FarmerLoansRoute
+  '/farmer/network': typeof FarmerNetworkRoute
+  '/farmer/notifications': typeof FarmerNotificationsRoute
+  '/farmer/profile': typeof FarmerProfileRoute
+  '/farmer/reports': typeof FarmerReportsRoute
+  '/farmer/settings': typeof FarmerSettingsRoute
+  '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/lender/applications': typeof LenderApplicationsRouteWithChildren
+  '/lender/assistant': typeof LenderAssistantRoute
+  '/lender/climate': typeof LenderClimateRoute
+  '/lender/explainability': typeof LenderExplainabilityRoute
+  '/lender/farmers': typeof LenderFarmersRouteWithChildren
+  '/lender/graph': typeof LenderGraphRoute
+  '/lender/notifications': typeof LenderNotificationsRoute
+  '/lender/portfolio': typeof LenderPortfolioRoute
+  '/lender/reports': typeof LenderReportsRoute
+  '/lender/risk': typeof LenderRiskRoute
+  '/lender/settings': typeof LenderSettingsRoute
+  '/lender/trust': typeof LenderTrustRoute
+  '/farmer': typeof FarmerIndexRoute
+  '/lender': typeof LenderIndexRoute
+  '/lender/applications/$id': typeof LenderApplicationsIdRoute
+  '/lender/farmers/$id': typeof LenderFarmersIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/farmer': typeof FarmerRoute
-  '/lender': typeof LenderRoute
+  '/farmer': typeof FarmerRouteWithChildren
+  '/lender': typeof LenderRouteWithChildren
+  '/farmer/analytics': typeof FarmerAnalyticsRoute
+  '/farmer/assistant': typeof FarmerAssistantRoute
+  '/farmer/climate': typeof FarmerClimateRoute
+  '/farmer/cooperative': typeof FarmerCooperativeRoute
+  '/farmer/credit': typeof FarmerCreditRoute
+  '/farmer/farm': typeof FarmerFarmRoute
+  '/farmer/loans': typeof FarmerLoansRoute
+  '/farmer/network': typeof FarmerNetworkRoute
+  '/farmer/notifications': typeof FarmerNotificationsRoute
+  '/farmer/profile': typeof FarmerProfileRoute
+  '/farmer/reports': typeof FarmerReportsRoute
+  '/farmer/settings': typeof FarmerSettingsRoute
+  '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/lender/applications': typeof LenderApplicationsRouteWithChildren
+  '/lender/assistant': typeof LenderAssistantRoute
+  '/lender/climate': typeof LenderClimateRoute
+  '/lender/explainability': typeof LenderExplainabilityRoute
+  '/lender/farmers': typeof LenderFarmersRouteWithChildren
+  '/lender/graph': typeof LenderGraphRoute
+  '/lender/notifications': typeof LenderNotificationsRoute
+  '/lender/portfolio': typeof LenderPortfolioRoute
+  '/lender/reports': typeof LenderReportsRoute
+  '/lender/risk': typeof LenderRiskRoute
+  '/lender/settings': typeof LenderSettingsRoute
+  '/lender/trust': typeof LenderTrustRoute
+  '/farmer/': typeof FarmerIndexRoute
+  '/lender/': typeof LenderIndexRoute
+  '/lender/applications/$id': typeof LenderApplicationsIdRoute
+  '/lender/farmers/$id': typeof LenderFarmersIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/farmer' | '/lender'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/farmer'
+    | '/lender'
+    | '/farmer/analytics'
+    | '/farmer/assistant'
+    | '/farmer/climate'
+    | '/farmer/cooperative'
+    | '/farmer/credit'
+    | '/farmer/farm'
+    | '/farmer/loans'
+    | '/farmer/network'
+    | '/farmer/notifications'
+    | '/farmer/profile'
+    | '/farmer/reports'
+    | '/farmer/settings'
+    | '/farmer/trust-score'
+    | '/lender/applications'
+    | '/lender/assistant'
+    | '/lender/climate'
+    | '/lender/explainability'
+    | '/lender/farmers'
+    | '/lender/graph'
+    | '/lender/notifications'
+    | '/lender/portfolio'
+    | '/lender/reports'
+    | '/lender/risk'
+    | '/lender/settings'
+    | '/lender/trust'
+    | '/farmer/'
+    | '/lender/'
+    | '/lender/applications/$id'
+    | '/lender/farmers/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/farmer' | '/lender'
-  id: '__root__' | '/' | '/auth' | '/farmer' | '/lender'
+  to:
+    | '/'
+    | '/auth'
+    | '/farmer/analytics'
+    | '/farmer/assistant'
+    | '/farmer/climate'
+    | '/farmer/cooperative'
+    | '/farmer/credit'
+    | '/farmer/farm'
+    | '/farmer/loans'
+    | '/farmer/network'
+    | '/farmer/notifications'
+    | '/farmer/profile'
+    | '/farmer/reports'
+    | '/farmer/settings'
+    | '/farmer/trust-score'
+    | '/lender/applications'
+    | '/lender/assistant'
+    | '/lender/climate'
+    | '/lender/explainability'
+    | '/lender/farmers'
+    | '/lender/graph'
+    | '/lender/notifications'
+    | '/lender/portfolio'
+    | '/lender/reports'
+    | '/lender/risk'
+    | '/lender/settings'
+    | '/lender/trust'
+    | '/farmer'
+    | '/lender'
+    | '/lender/applications/$id'
+    | '/lender/farmers/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/farmer'
+    | '/lender'
+    | '/farmer/analytics'
+    | '/farmer/assistant'
+    | '/farmer/climate'
+    | '/farmer/cooperative'
+    | '/farmer/credit'
+    | '/farmer/farm'
+    | '/farmer/loans'
+    | '/farmer/network'
+    | '/farmer/notifications'
+    | '/farmer/profile'
+    | '/farmer/reports'
+    | '/farmer/settings'
+    | '/farmer/trust-score'
+    | '/lender/applications'
+    | '/lender/assistant'
+    | '/lender/climate'
+    | '/lender/explainability'
+    | '/lender/farmers'
+    | '/lender/graph'
+    | '/lender/notifications'
+    | '/lender/portfolio'
+    | '/lender/reports'
+    | '/lender/risk'
+    | '/lender/settings'
+    | '/lender/trust'
+    | '/farmer/'
+    | '/lender/'
+    | '/lender/applications/$id'
+    | '/lender/farmers/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  FarmerRoute: typeof FarmerRoute
-  LenderRoute: typeof LenderRoute
+  FarmerRoute: typeof FarmerRouteWithChildren
+  LenderRoute: typeof LenderRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -99,14 +456,312 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lender/': {
+      id: '/lender/'
+      path: '/'
+      fullPath: '/lender/'
+      preLoaderRoute: typeof LenderIndexRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/farmer/': {
+      id: '/farmer/'
+      path: '/'
+      fullPath: '/farmer/'
+      preLoaderRoute: typeof FarmerIndexRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/lender/trust': {
+      id: '/lender/trust'
+      path: '/trust'
+      fullPath: '/lender/trust'
+      preLoaderRoute: typeof LenderTrustRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/settings': {
+      id: '/lender/settings'
+      path: '/settings'
+      fullPath: '/lender/settings'
+      preLoaderRoute: typeof LenderSettingsRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/risk': {
+      id: '/lender/risk'
+      path: '/risk'
+      fullPath: '/lender/risk'
+      preLoaderRoute: typeof LenderRiskRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/reports': {
+      id: '/lender/reports'
+      path: '/reports'
+      fullPath: '/lender/reports'
+      preLoaderRoute: typeof LenderReportsRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/portfolio': {
+      id: '/lender/portfolio'
+      path: '/portfolio'
+      fullPath: '/lender/portfolio'
+      preLoaderRoute: typeof LenderPortfolioRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/notifications': {
+      id: '/lender/notifications'
+      path: '/notifications'
+      fullPath: '/lender/notifications'
+      preLoaderRoute: typeof LenderNotificationsRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/graph': {
+      id: '/lender/graph'
+      path: '/graph'
+      fullPath: '/lender/graph'
+      preLoaderRoute: typeof LenderGraphRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/farmers': {
+      id: '/lender/farmers'
+      path: '/farmers'
+      fullPath: '/lender/farmers'
+      preLoaderRoute: typeof LenderFarmersRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/explainability': {
+      id: '/lender/explainability'
+      path: '/explainability'
+      fullPath: '/lender/explainability'
+      preLoaderRoute: typeof LenderExplainabilityRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/climate': {
+      id: '/lender/climate'
+      path: '/climate'
+      fullPath: '/lender/climate'
+      preLoaderRoute: typeof LenderClimateRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/assistant': {
+      id: '/lender/assistant'
+      path: '/assistant'
+      fullPath: '/lender/assistant'
+      preLoaderRoute: typeof LenderAssistantRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/lender/applications': {
+      id: '/lender/applications'
+      path: '/applications'
+      fullPath: '/lender/applications'
+      preLoaderRoute: typeof LenderApplicationsRouteImport
+      parentRoute: typeof LenderRoute
+    }
+    '/farmer/trust-score': {
+      id: '/farmer/trust-score'
+      path: '/trust-score'
+      fullPath: '/farmer/trust-score'
+      preLoaderRoute: typeof FarmerTrustScoreRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/settings': {
+      id: '/farmer/settings'
+      path: '/settings'
+      fullPath: '/farmer/settings'
+      preLoaderRoute: typeof FarmerSettingsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/reports': {
+      id: '/farmer/reports'
+      path: '/reports'
+      fullPath: '/farmer/reports'
+      preLoaderRoute: typeof FarmerReportsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/profile': {
+      id: '/farmer/profile'
+      path: '/profile'
+      fullPath: '/farmer/profile'
+      preLoaderRoute: typeof FarmerProfileRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/notifications': {
+      id: '/farmer/notifications'
+      path: '/notifications'
+      fullPath: '/farmer/notifications'
+      preLoaderRoute: typeof FarmerNotificationsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/network': {
+      id: '/farmer/network'
+      path: '/network'
+      fullPath: '/farmer/network'
+      preLoaderRoute: typeof FarmerNetworkRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/loans': {
+      id: '/farmer/loans'
+      path: '/loans'
+      fullPath: '/farmer/loans'
+      preLoaderRoute: typeof FarmerLoansRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/farm': {
+      id: '/farmer/farm'
+      path: '/farm'
+      fullPath: '/farmer/farm'
+      preLoaderRoute: typeof FarmerFarmRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/credit': {
+      id: '/farmer/credit'
+      path: '/credit'
+      fullPath: '/farmer/credit'
+      preLoaderRoute: typeof FarmerCreditRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/cooperative': {
+      id: '/farmer/cooperative'
+      path: '/cooperative'
+      fullPath: '/farmer/cooperative'
+      preLoaderRoute: typeof FarmerCooperativeRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/climate': {
+      id: '/farmer/climate'
+      path: '/climate'
+      fullPath: '/farmer/climate'
+      preLoaderRoute: typeof FarmerClimateRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/assistant': {
+      id: '/farmer/assistant'
+      path: '/assistant'
+      fullPath: '/farmer/assistant'
+      preLoaderRoute: typeof FarmerAssistantRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/analytics': {
+      id: '/farmer/analytics'
+      path: '/analytics'
+      fullPath: '/farmer/analytics'
+      preLoaderRoute: typeof FarmerAnalyticsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/lender/farmers/$id': {
+      id: '/lender/farmers/$id'
+      path: '/$id'
+      fullPath: '/lender/farmers/$id'
+      preLoaderRoute: typeof LenderFarmersIdRouteImport
+      parentRoute: typeof LenderFarmersRoute
+    }
+    '/lender/applications/$id': {
+      id: '/lender/applications/$id'
+      path: '/$id'
+      fullPath: '/lender/applications/$id'
+      preLoaderRoute: typeof LenderApplicationsIdRouteImport
+      parentRoute: typeof LenderApplicationsRoute
+    }
   }
 }
+
+interface FarmerRouteChildren {
+  FarmerAnalyticsRoute: typeof FarmerAnalyticsRoute
+  FarmerAssistantRoute: typeof FarmerAssistantRoute
+  FarmerClimateRoute: typeof FarmerClimateRoute
+  FarmerCooperativeRoute: typeof FarmerCooperativeRoute
+  FarmerCreditRoute: typeof FarmerCreditRoute
+  FarmerFarmRoute: typeof FarmerFarmRoute
+  FarmerLoansRoute: typeof FarmerLoansRoute
+  FarmerNetworkRoute: typeof FarmerNetworkRoute
+  FarmerNotificationsRoute: typeof FarmerNotificationsRoute
+  FarmerProfileRoute: typeof FarmerProfileRoute
+  FarmerReportsRoute: typeof FarmerReportsRoute
+  FarmerSettingsRoute: typeof FarmerSettingsRoute
+  FarmerTrustScoreRoute: typeof FarmerTrustScoreRoute
+  FarmerIndexRoute: typeof FarmerIndexRoute
+}
+
+const FarmerRouteChildren: FarmerRouteChildren = {
+  FarmerAnalyticsRoute: FarmerAnalyticsRoute,
+  FarmerAssistantRoute: FarmerAssistantRoute,
+  FarmerClimateRoute: FarmerClimateRoute,
+  FarmerCooperativeRoute: FarmerCooperativeRoute,
+  FarmerCreditRoute: FarmerCreditRoute,
+  FarmerFarmRoute: FarmerFarmRoute,
+  FarmerLoansRoute: FarmerLoansRoute,
+  FarmerNetworkRoute: FarmerNetworkRoute,
+  FarmerNotificationsRoute: FarmerNotificationsRoute,
+  FarmerProfileRoute: FarmerProfileRoute,
+  FarmerReportsRoute: FarmerReportsRoute,
+  FarmerSettingsRoute: FarmerSettingsRoute,
+  FarmerTrustScoreRoute: FarmerTrustScoreRoute,
+  FarmerIndexRoute: FarmerIndexRoute,
+}
+
+const FarmerRouteWithChildren =
+  FarmerRoute._addFileChildren(FarmerRouteChildren)
+
+interface LenderApplicationsRouteChildren {
+  LenderApplicationsIdRoute: typeof LenderApplicationsIdRoute
+}
+
+const LenderApplicationsRouteChildren: LenderApplicationsRouteChildren = {
+  LenderApplicationsIdRoute: LenderApplicationsIdRoute,
+}
+
+const LenderApplicationsRouteWithChildren =
+  LenderApplicationsRoute._addFileChildren(LenderApplicationsRouteChildren)
+
+interface LenderFarmersRouteChildren {
+  LenderFarmersIdRoute: typeof LenderFarmersIdRoute
+}
+
+const LenderFarmersRouteChildren: LenderFarmersRouteChildren = {
+  LenderFarmersIdRoute: LenderFarmersIdRoute,
+}
+
+const LenderFarmersRouteWithChildren = LenderFarmersRoute._addFileChildren(
+  LenderFarmersRouteChildren,
+)
+
+interface LenderRouteChildren {
+  LenderApplicationsRoute: typeof LenderApplicationsRouteWithChildren
+  LenderAssistantRoute: typeof LenderAssistantRoute
+  LenderClimateRoute: typeof LenderClimateRoute
+  LenderExplainabilityRoute: typeof LenderExplainabilityRoute
+  LenderFarmersRoute: typeof LenderFarmersRouteWithChildren
+  LenderGraphRoute: typeof LenderGraphRoute
+  LenderNotificationsRoute: typeof LenderNotificationsRoute
+  LenderPortfolioRoute: typeof LenderPortfolioRoute
+  LenderReportsRoute: typeof LenderReportsRoute
+  LenderRiskRoute: typeof LenderRiskRoute
+  LenderSettingsRoute: typeof LenderSettingsRoute
+  LenderTrustRoute: typeof LenderTrustRoute
+  LenderIndexRoute: typeof LenderIndexRoute
+}
+
+const LenderRouteChildren: LenderRouteChildren = {
+  LenderApplicationsRoute: LenderApplicationsRouteWithChildren,
+  LenderAssistantRoute: LenderAssistantRoute,
+  LenderClimateRoute: LenderClimateRoute,
+  LenderExplainabilityRoute: LenderExplainabilityRoute,
+  LenderFarmersRoute: LenderFarmersRouteWithChildren,
+  LenderGraphRoute: LenderGraphRoute,
+  LenderNotificationsRoute: LenderNotificationsRoute,
+  LenderPortfolioRoute: LenderPortfolioRoute,
+  LenderReportsRoute: LenderReportsRoute,
+  LenderRiskRoute: LenderRiskRoute,
+  LenderSettingsRoute: LenderSettingsRoute,
+  LenderTrustRoute: LenderTrustRoute,
+  LenderIndexRoute: LenderIndexRoute,
+}
+
+const LenderRouteWithChildren =
+  LenderRoute._addFileChildren(LenderRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  FarmerRoute: FarmerRoute,
-  LenderRoute: LenderRoute,
+  FarmerRoute: FarmerRouteWithChildren,
+  LenderRoute: LenderRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

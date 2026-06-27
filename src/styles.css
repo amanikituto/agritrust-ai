@@ -173,6 +173,25 @@
   to { stroke-dashoffset: 0; }
 }
 
+/* Light theme override */
+:root.light {
+  --background: oklch(0.985 0.005 220);
+  --foreground: oklch(0.18 0.02 220);
+  --surface: oklch(0.97 0.008 220);
+  --surface-elevated: oklch(0.94 0.012 220);
+  --card: oklch(1 0 0 / 0.7);
+  --card-foreground: oklch(0.18 0.02 220);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 220);
+  --secondary: oklch(0.92 0.01 220);
+  --muted: oklch(0.93 0.01 220);
+  --muted-foreground: oklch(0.42 0.02 220);
+  --border: oklch(0.18 0.02 220 / 0.1);
+  --input: oklch(0.18 0.02 220 / 0.12);
+  --primary-foreground: oklch(1 0 0);
+  --accent-foreground: oklch(0.18 0.02 220);
+}
+
 /* Accessibility overrides */
 :root.a11y-large-text { font-size: 112.5%; }
 :root.a11y-high-contrast {
