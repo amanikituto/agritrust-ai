@@ -75,6 +75,7 @@ function FarmersDirectory() {
                   <tr key={a.id} className="hover:bg-surface-elevated/40">
                     <td className="px-3 py-3">
                       <Link to="/lender/farmers/$id" params={{ id: a.id }} className="font-medium hover:text-emerald">{a.name}</Link>
+                      {!a.onboarded && <Tag label="Onboarding" tone="gold" />}
                     </td>
                     <td className="px-3 py-3 text-muted-foreground">{a.county ?? "—"}</td>
                     <td className="px-3 py-3">{(a.crops ?? []).join(", ") || "—"}</td>

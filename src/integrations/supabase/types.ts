@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_jobs: {
+        Row: {
+          amount_kes: number
+          buyer_id: string
+          created_at: string
+          escrow_tx: string
+          explorer_url: string | null
+          farmer_id: string
+          id: string
+          is_mocked: boolean
+          masumi_job_id: string
+          outbound_explorer_url: string | null
+          outbound_tx: string | null
+          result: Json | null
+          status: string
+          tier: string
+        }
+        Insert: {
+          amount_kes: number
+          buyer_id: string
+          created_at?: string
+          escrow_tx: string
+          explorer_url?: string | null
+          farmer_id: string
+          id?: string
+          is_mocked?: boolean
+          masumi_job_id: string
+          outbound_explorer_url?: string | null
+          outbound_tx?: string | null
+          result?: Json | null
+          status?: string
+          tier: string
+        }
+        Update: {
+          amount_kes?: number
+          buyer_id?: string
+          created_at?: string
+          escrow_tx?: string
+          explorer_url?: string | null
+          farmer_id?: string
+          id?: string
+          is_mocked?: boolean
+          masumi_job_id?: string
+          outbound_explorer_url?: string | null
+          outbound_tx?: string | null
+          result?: Json | null
+          status?: string
+          tier?: string
+        }
+        Relationships: []
+      }
       audit_events: {
         Row: {
           action: string

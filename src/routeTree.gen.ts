@@ -28,6 +28,7 @@ import { Route as LenderExplainabilityRouteImport } from './routes/lender.explai
 import { Route as LenderClimateRouteImport } from './routes/lender.climate'
 import { Route as LenderAssistantRouteImport } from './routes/lender.assistant'
 import { Route as LenderApplicationsRouteImport } from './routes/lender.applications'
+import { Route as LenderAgentRouteImport } from './routes/lender.agent'
 import { Route as FarmerTrustScoreRouteImport } from './routes/farmer.trust-score'
 import { Route as FarmerSettingsRouteImport } from './routes/farmer.settings'
 import { Route as FarmerReportsRouteImport } from './routes/farmer.reports'
@@ -45,6 +46,8 @@ import { Route as FarmerAnalyticsRouteImport } from './routes/farmer.analytics'
 import { Route as LenderFarmersIdRouteImport } from './routes/lender.farmers.$id'
 import { Route as LenderApplicationsIdRouteImport } from './routes/lender.applications.$id'
 import { Route as ApiPublicUssdRouteImport } from './routes/api/public/ussd'
+import { Route as ApiPublicAgentInvokeRouteImport } from './routes/api/public/agent/invoke'
+import { Route as ApiPublicAgentDiscoverRouteImport } from './routes/api/public/agent/discover'
 
 const LenderRoute = LenderRouteImport.update({
   id: '/lender',
@@ -141,6 +144,11 @@ const LenderApplicationsRoute = LenderApplicationsRouteImport.update({
   path: '/applications',
   getParentRoute: () => LenderRoute,
 } as any)
+const LenderAgentRoute = LenderAgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => LenderRoute,
+} as any)
 const FarmerTrustScoreRoute = FarmerTrustScoreRouteImport.update({
   id: '/trust-score',
   path: '/trust-score',
@@ -226,6 +234,16 @@ const ApiPublicUssdRoute = ApiPublicUssdRouteImport.update({
   path: '/api/public/ussd',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAgentInvokeRoute = ApiPublicAgentInvokeRouteImport.update({
+  id: '/api/public/agent/invoke',
+  path: '/api/public/agent/invoke',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentDiscoverRoute = ApiPublicAgentDiscoverRouteImport.update({
+  id: '/api/public/agent/discover',
+  path: '/api/public/agent/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -246,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/lender/agent': typeof LenderAgentRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
@@ -264,6 +283,8 @@ export interface FileRoutesByFullPath {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
+  '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -282,6 +303,7 @@ export interface FileRoutesByTo {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/lender/agent': typeof LenderAgentRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
@@ -300,6 +322,8 @@ export interface FileRoutesByTo {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
+  '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -321,6 +345,7 @@ export interface FileRoutesById {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/lender/agent': typeof LenderAgentRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
@@ -339,6 +364,8 @@ export interface FileRoutesById {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
+  '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -361,6 +388,7 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
+    | '/lender/agent'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
@@ -379,6 +407,8 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/api/public/agent/discover'
+    | '/api/public/agent/invoke'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -397,6 +427,7 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
+    | '/lender/agent'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
@@ -415,6 +446,8 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/api/public/agent/discover'
+    | '/api/public/agent/invoke'
   id:
     | '__root__'
     | '/'
@@ -435,6 +468,7 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
+    | '/lender/agent'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
@@ -453,6 +487,8 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/api/public/agent/discover'
+    | '/api/public/agent/invoke'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -461,6 +497,8 @@ export interface RootRouteChildren {
   FarmerRoute: typeof FarmerRouteWithChildren
   LenderRoute: typeof LenderRouteWithChildren
   ApiPublicUssdRoute: typeof ApiPublicUssdRoute
+  ApiPublicAgentDiscoverRoute: typeof ApiPublicAgentDiscoverRoute
+  ApiPublicAgentInvokeRoute: typeof ApiPublicAgentInvokeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -598,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LenderApplicationsRouteImport
       parentRoute: typeof LenderRoute
     }
+    '/lender/agent': {
+      id: '/lender/agent'
+      path: '/agent'
+      fullPath: '/lender/agent'
+      preLoaderRoute: typeof LenderAgentRouteImport
+      parentRoute: typeof LenderRoute
+    }
     '/farmer/trust-score': {
       id: '/farmer/trust-score'
       path: '/trust-score'
@@ -717,6 +762,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicUssdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/agent/invoke': {
+      id: '/api/public/agent/invoke'
+      path: '/api/public/agent/invoke'
+      fullPath: '/api/public/agent/invoke'
+      preLoaderRoute: typeof ApiPublicAgentInvokeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/discover': {
+      id: '/api/public/agent/discover'
+      path: '/api/public/agent/discover'
+      fullPath: '/api/public/agent/discover'
+      preLoaderRoute: typeof ApiPublicAgentDiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -783,6 +842,7 @@ const LenderFarmersRouteWithChildren = LenderFarmersRoute._addFileChildren(
 )
 
 interface LenderRouteChildren {
+  LenderAgentRoute: typeof LenderAgentRoute
   LenderApplicationsRoute: typeof LenderApplicationsRouteWithChildren
   LenderAssistantRoute: typeof LenderAssistantRoute
   LenderClimateRoute: typeof LenderClimateRoute
@@ -800,6 +860,7 @@ interface LenderRouteChildren {
 }
 
 const LenderRouteChildren: LenderRouteChildren = {
+  LenderAgentRoute: LenderAgentRoute,
   LenderApplicationsRoute: LenderApplicationsRouteWithChildren,
   LenderAssistantRoute: LenderAssistantRoute,
   LenderClimateRoute: LenderClimateRoute,
@@ -825,6 +886,8 @@ const rootRouteChildren: RootRouteChildren = {
   FarmerRoute: FarmerRouteWithChildren,
   LenderRoute: LenderRouteWithChildren,
   ApiPublicUssdRoute: ApiPublicUssdRoute,
+  ApiPublicAgentDiscoverRoute: ApiPublicAgentDiscoverRoute,
+  ApiPublicAgentInvokeRoute: ApiPublicAgentInvokeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
