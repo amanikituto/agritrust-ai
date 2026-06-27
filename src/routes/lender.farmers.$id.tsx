@@ -116,7 +116,7 @@ function FarmerProfile() {
         <Card title="Factor contributions" icon={ShieldCheck}>
           <ShapBars positive={positive} negative={negative} />
         </Card>
-        <Card title="Loan activity (KES)", icon={CloudRain}>
+        <Card title="Loan activity (KES)" icon={CloudRain}>
           <Bars data={loans.length ? loans.map((l) => Math.round(Number(l.amount_kes ?? 0) / 1000)) : [0]} labels={loans.map((l) => l.status)} />
         </Card>
       </div>
