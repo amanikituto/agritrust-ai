@@ -10,14 +10,13 @@ export const askAssistant = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("LOVABLE_API_KEY missing");
 
-    // Ground with profile snapshot
     let grounding = "";
     if (data.role === "farmer") {
-      const { data: fp } = await context.supabase.from("farmer_profiles").select("*").eq("user_id", context.userId).maybeSingle();
-      const { data: ts } = await context.supabase.from("trust_scores").select("*").eq("user_id", context.userId).order("created_at", { ascending: false }).limit(1).maybeSingle();
+      const { data: fp } = await context.supabase.from("farmer_profiles").select("*").eq("id", context.userId).maybeSingle();
+      const { data: ts } = await context.supabase.from("trust_scores").select("*").eq("farmer_id", context.userId).order("computed_at", { ascending: false }).limit(1).maybeSingle();
       grounding = `Farmer profile: ${JSON.stringify(fp ?? {})}. Latest trust score: ${JSON.stringify(ts ?? {})}.`;
     } else {
-      const { data: apps } = await context.supabase.from("loan_applications").select("id,status,amount,created_at").limit(20);
+      const { data: apps } = await context.supabase.from("loan_applications").select("id,status,amount_kes,created_at").limit(20);
       grounding = `Recent loan applications in your portfolio: ${JSON.stringify(apps ?? [])}.`;
     }
 
