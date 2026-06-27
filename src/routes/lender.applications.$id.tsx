@@ -26,6 +26,10 @@ import {
 
 type Tier = "basic" | "standard" | "premium";
 
+// Fallback Masumi pricing — mirrors src/lib/masumi.server.ts so the paywall
+// always shows correct KES amounts even if listAgentInfo() is still loading.
+const FALLBACK_PRICING: Record<Tier, number> = { basic: 50, standard: 150, premium: 400 };
+
 interface AgritrustProfile {
   farmer_id: string;
   tier: Tier;
