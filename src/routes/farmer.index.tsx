@@ -42,8 +42,15 @@ export const Route = createFileRoute("/farmer/")({
 
 function FarmerOverview() {
   const { user } = useAuth();
+  const tsFn = useServerFn(getMyTrustScore);
+  const ts = useQuery({ queryKey: ["trust", "mine"], queryFn: () => tsFn() });
   const name =
     (user?.user_metadata?.full_name as string | undefined)?.split(" ")[0] ?? "Farmer";
+
+  const score = ts.data?.score ?? 0;
+  const readiness = ts.data?.credit_readiness ?? 0;
+  const eligibility = ts.data?.loan_eligibility_kes ?? 0;
+  const climate = ts.data?.climate_risk ?? "—";
 
   return (
     <div className="space-y-8">
@@ -66,22 +73,20 @@ function FarmerOverview() {
       <section className="grid gap-4 lg:grid-cols-[1fr_2fr]">
         <Card title="Trust Score" icon={Shield}>
           <div className="flex flex-col items-center py-2">
-            <Gauge score={742} />
+            <Gauge score={score} />
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs">
-              <span className="rounded-full bg-emerald/10 px-2.5 py-1 font-semibold text-emerald">
-                +18 this month
-              </span>
-              <span className="rounded-full bg-surface-elevated px-2.5 py-1 text-muted-foreground">
-                Good · Low risk
-              </span>
+              <Link to="/farmer/trust-score" className="rounded-full bg-emerald/10 px-2.5 py-1 font-semibold text-emerald hover:bg-emerald/20">
+                {ts.data ? "View breakdown" : "Compute now"}
+              </Link>
+              <span className="rounded-full bg-surface-elevated px-2.5 py-1 text-muted-foreground">Climate · {climate}</span>
             </div>
           </div>
         </Card>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <KpiCard label="Credit readiness" value="78%" tone="emerald" icon={Shield} sub="2 items left" />
-          <KpiCard label="Loan eligibility" value="KES 120,000" tone="sky" icon={Wallet} sub="Pre-qualified" />
-          <KpiCard label="Climate risk" value="Low" tone="gold" icon={CloudRain} sub="Rainfall on track" />
+          <KpiCard label="Credit readiness" value={`${readiness}%`} tone="emerald" icon={Shield} sub="Live" />
+          <KpiCard label="Loan eligibility" value={`KES ${eligibility.toLocaleString()}`} tone="sky" icon={Wallet} sub="Pre-qualified" />
+          <KpiCard label="Climate risk" value={climate} tone="gold" icon={CloudRain} sub="From engine" />
           <KpiCard label="Productivity" value="Healthy" tone="emerald" icon={Sprout} sub="NDVI 0.71" />
           <KpiCard label="Savings 90d" value="+22%" tone="emerald" icon={PiggyBank} sub="vs prev period" />
           <KpiCard label="Coop rank" value="#12 / 240" tone="gold" icon={Users} sub="Kiambu coop" />
