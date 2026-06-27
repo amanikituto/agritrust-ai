@@ -81,3 +81,19 @@ export const listMyAgentJobs = createServerFn({ method: "GET" })
       .limit(50);
     return data ?? [];
   });
+
+export const getExistingAgentJob = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { farmerId: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { data: row } = await context.supabase
+      .from("agent_jobs")
+      .select("id, farmer_id, tier, amount_kes, masumi_job_id, escrow_tx, explorer_url, outbound_tx, outbound_explorer_url, is_mocked, result, created_at")
+      .eq("buyer_id", context.userId)
+      .eq("farmer_id", data.farmerId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return row ?? null;
+  });
+

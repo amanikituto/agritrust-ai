@@ -21,14 +21,12 @@ import { Route as LenderRiskRouteImport } from './routes/lender.risk'
 import { Route as LenderReportsRouteImport } from './routes/lender.reports'
 import { Route as LenderPortfolioRouteImport } from './routes/lender.portfolio'
 import { Route as LenderNotificationsRouteImport } from './routes/lender.notifications'
-import { Route as LenderMarketplaceRouteImport } from './routes/lender.marketplace'
 import { Route as LenderGraphRouteImport } from './routes/lender.graph'
 import { Route as LenderFarmersRouteImport } from './routes/lender.farmers'
 import { Route as LenderExplainabilityRouteImport } from './routes/lender.explainability'
 import { Route as LenderClimateRouteImport } from './routes/lender.climate'
 import { Route as LenderAssistantRouteImport } from './routes/lender.assistant'
 import { Route as LenderApplicationsRouteImport } from './routes/lender.applications'
-import { Route as LenderAgentRouteImport } from './routes/lender.agent'
 import { Route as FarmerTrustScoreRouteImport } from './routes/farmer.trust-score'
 import { Route as FarmerSettingsRouteImport } from './routes/farmer.settings'
 import { Route as FarmerReportsRouteImport } from './routes/farmer.reports'
@@ -109,11 +107,6 @@ const LenderNotificationsRoute = LenderNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => LenderRoute,
 } as any)
-const LenderMarketplaceRoute = LenderMarketplaceRouteImport.update({
-  id: '/marketplace',
-  path: '/marketplace',
-  getParentRoute: () => LenderRoute,
-} as any)
 const LenderGraphRoute = LenderGraphRouteImport.update({
   id: '/graph',
   path: '/graph',
@@ -142,11 +135,6 @@ const LenderAssistantRoute = LenderAssistantRouteImport.update({
 const LenderApplicationsRoute = LenderApplicationsRouteImport.update({
   id: '/applications',
   path: '/applications',
-  getParentRoute: () => LenderRoute,
-} as any)
-const LenderAgentRoute = LenderAgentRouteImport.update({
-  id: '/agent',
-  path: '/agent',
   getParentRoute: () => LenderRoute,
 } as any)
 const FarmerTrustScoreRoute = FarmerTrustScoreRouteImport.update({
@@ -264,14 +252,12 @@ export interface FileRoutesByFullPath {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
-  '/lender/agent': typeof LenderAgentRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
   '/lender/explainability': typeof LenderExplainabilityRoute
   '/lender/farmers': typeof LenderFarmersRouteWithChildren
   '/lender/graph': typeof LenderGraphRoute
-  '/lender/marketplace': typeof LenderMarketplaceRoute
   '/lender/notifications': typeof LenderNotificationsRoute
   '/lender/portfolio': typeof LenderPortfolioRoute
   '/lender/reports': typeof LenderReportsRoute
@@ -303,14 +289,12 @@ export interface FileRoutesByTo {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
-  '/lender/agent': typeof LenderAgentRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
   '/lender/explainability': typeof LenderExplainabilityRoute
   '/lender/farmers': typeof LenderFarmersRouteWithChildren
   '/lender/graph': typeof LenderGraphRoute
-  '/lender/marketplace': typeof LenderMarketplaceRoute
   '/lender/notifications': typeof LenderNotificationsRoute
   '/lender/portfolio': typeof LenderPortfolioRoute
   '/lender/reports': typeof LenderReportsRoute
@@ -345,14 +329,12 @@ export interface FileRoutesById {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
-  '/lender/agent': typeof LenderAgentRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
   '/lender/explainability': typeof LenderExplainabilityRoute
   '/lender/farmers': typeof LenderFarmersRouteWithChildren
   '/lender/graph': typeof LenderGraphRoute
-  '/lender/marketplace': typeof LenderMarketplaceRoute
   '/lender/notifications': typeof LenderNotificationsRoute
   '/lender/portfolio': typeof LenderPortfolioRoute
   '/lender/reports': typeof LenderReportsRoute
@@ -388,14 +370,12 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
-    | '/lender/agent'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
     | '/lender/explainability'
     | '/lender/farmers'
     | '/lender/graph'
-    | '/lender/marketplace'
     | '/lender/notifications'
     | '/lender/portfolio'
     | '/lender/reports'
@@ -427,14 +407,12 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
-    | '/lender/agent'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
     | '/lender/explainability'
     | '/lender/farmers'
     | '/lender/graph'
-    | '/lender/marketplace'
     | '/lender/notifications'
     | '/lender/portfolio'
     | '/lender/reports'
@@ -468,14 +446,12 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
-    | '/lender/agent'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
     | '/lender/explainability'
     | '/lender/farmers'
     | '/lender/graph'
-    | '/lender/marketplace'
     | '/lender/notifications'
     | '/lender/portfolio'
     | '/lender/reports'
@@ -587,13 +563,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LenderNotificationsRouteImport
       parentRoute: typeof LenderRoute
     }
-    '/lender/marketplace': {
-      id: '/lender/marketplace'
-      path: '/marketplace'
-      fullPath: '/lender/marketplace'
-      preLoaderRoute: typeof LenderMarketplaceRouteImport
-      parentRoute: typeof LenderRoute
-    }
     '/lender/graph': {
       id: '/lender/graph'
       path: '/graph'
@@ -634,13 +603,6 @@ declare module '@tanstack/react-router' {
       path: '/applications'
       fullPath: '/lender/applications'
       preLoaderRoute: typeof LenderApplicationsRouteImport
-      parentRoute: typeof LenderRoute
-    }
-    '/lender/agent': {
-      id: '/lender/agent'
-      path: '/agent'
-      fullPath: '/lender/agent'
-      preLoaderRoute: typeof LenderAgentRouteImport
       parentRoute: typeof LenderRoute
     }
     '/farmer/trust-score': {
@@ -842,14 +804,12 @@ const LenderFarmersRouteWithChildren = LenderFarmersRoute._addFileChildren(
 )
 
 interface LenderRouteChildren {
-  LenderAgentRoute: typeof LenderAgentRoute
   LenderApplicationsRoute: typeof LenderApplicationsRouteWithChildren
   LenderAssistantRoute: typeof LenderAssistantRoute
   LenderClimateRoute: typeof LenderClimateRoute
   LenderExplainabilityRoute: typeof LenderExplainabilityRoute
   LenderFarmersRoute: typeof LenderFarmersRouteWithChildren
   LenderGraphRoute: typeof LenderGraphRoute
-  LenderMarketplaceRoute: typeof LenderMarketplaceRoute
   LenderNotificationsRoute: typeof LenderNotificationsRoute
   LenderPortfolioRoute: typeof LenderPortfolioRoute
   LenderReportsRoute: typeof LenderReportsRoute
@@ -860,14 +820,12 @@ interface LenderRouteChildren {
 }
 
 const LenderRouteChildren: LenderRouteChildren = {
-  LenderAgentRoute: LenderAgentRoute,
   LenderApplicationsRoute: LenderApplicationsRouteWithChildren,
   LenderAssistantRoute: LenderAssistantRoute,
   LenderClimateRoute: LenderClimateRoute,
   LenderExplainabilityRoute: LenderExplainabilityRoute,
   LenderFarmersRoute: LenderFarmersRouteWithChildren,
   LenderGraphRoute: LenderGraphRoute,
-  LenderMarketplaceRoute: LenderMarketplaceRoute,
   LenderNotificationsRoute: LenderNotificationsRoute,
   LenderPortfolioRoute: LenderPortfolioRoute,
   LenderReportsRoute: LenderReportsRoute,
