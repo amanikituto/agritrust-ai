@@ -143,19 +143,27 @@ function Hero() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
-              Request Demo <ArrowRight className="h-4 w-4" />
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-xl glass-strong px-6 py-3.5 text-sm font-semibold text-foreground transition hover:bg-surface-elevated">
-              Explore Platform
-            </button>
+            <Link
+              to="/auth"
+              search={{ role: "farmer", mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110"
+            >
+              <Sprout className="h-4 w-4" /> I'm a Farmer
+            </Link>
+            <Link
+              to="/auth"
+              search={{ role: "lender", mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-xl glass-strong px-6 py-3.5 text-sm font-semibold text-foreground transition hover:bg-surface-elevated"
+            >
+              <Building2 className="h-4 w-4" /> I'm a Financial Institution
+            </Link>
             <button className="inline-flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
               <PlayCircle className="h-5 w-5" /> Watch demo
             </button>
           </div>
 
           <p className="mt-10 text-xs uppercase tracking-[0.18em] text-muted-foreground/70">
-            Trust is more valuable than collateral
+            Fair finance · Explainable decisions · Inclusive agriculture
           </p>
         </div>
 
