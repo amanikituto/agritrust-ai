@@ -44,7 +44,7 @@ export const Route = createFileRoute("/lender/applications/$id")({
   component: DecisionWorkspace,
 });
 
-type Tier = "basic" | "standard" | "premium";
+
 
 interface PurchaseResult {
   profile: AgritrustProfile;
