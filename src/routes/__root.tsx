@@ -94,6 +94,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "AgriTrust AI — Making Invisible Farmers Visible" },
+      { name: "description", content: "AgriTrust Insight is an AI platform for fair agricultural lending using alternative data and graph intelligence." },
+      { property: "og:description", content: "AgriTrust Insight is an AI platform for fair agricultural lending using alternative data and graph intelligence." },
+      { name: "twitter:description", content: "AgriTrust Insight is an AI platform for fair agricultural lending using alternative data and graph intelligence." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/151a39f7-f6bd-48c8-9899-1862d9e3a0ae/id-preview-d6d55db6--b78f949b-46fd-46a7-a7fc-70de8ed368ce.lovable.app-1782562570859.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/151a39f7-f6bd-48c8-9899-1862d9e3a0ae/id-preview-d6d55db6--b78f949b-46fd-46a7-a7fc-70de8ed368ce.lovable.app-1782562570859.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
