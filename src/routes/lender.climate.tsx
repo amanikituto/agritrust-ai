@@ -1,30 +1,69 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQueries } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CloudRain, Droplets, Map as MapIcon, Thermometer } from "lucide-react";
 import { Card, KpiCard, SectionTitle, Tag } from "@/components/dashboard/primitives";
-import { COUNTY_TRUST } from "@/lib/mock-data";
+import { getClimate, type ClimateData } from "@/lib/climate.functions";
 
 export const Route = createFileRoute("/lender/climate")({
   component: ClimatePage,
 });
 
+const COUNTIES = [
+  "Kiambu", "Nyeri", "Murang'a", "Nakuru", "Kisumu", "Trans Nzoia",
+  "Meru", "Kakamega", "Machakos", "Bungoma", "Uasin Gishu", "Embu", "Garissa", "Turkana",
+];
+
 function ClimatePage() {
+  const fetchClimate = useServerFn(getClimate);
+  const queries = useQueries({
+    queries: COUNTIES.map((c) => ({
+      queryKey: ["climate", c],
+      queryFn: () => fetchClimate({ data: { county: c } }),
+      staleTime: 10 * 60_000,
+    })),
+  });
+
+  const results = queries.map((q, i) => ({ county: COUNTIES[i], data: q.data as ClimateData | undefined }));
+  const loaded = results.filter((r) => r.data);
+  const high = loaded.filter((r) => r.data!.droughtIndex === "High");
+  const avgRain = loaded.length ? Math.round(loaded.reduce((a, r) => a + r.data!.rainfall7d, 0) / loaded.length) : 0;
+  const avgTemp = loaded.length ? +(loaded.reduce((a, r) => a + r.data!.current.temperatureC, 0) / loaded.length).toFixed(1) : 0;
+  const avgNdvi = loaded.length
+    ? +(loaded.reduce((a, r) => a + (r.data!.ndvi12mo.at(-1) ?? 0), 0) / loaded.length).toFixed(2)
+    : 0;
+
+  const alerts = loaded
+    .flatMap((r) => r.data!.alerts.filter((a) => a.tone === "rose" || a.tone === "sky").map((a) => ({ ...a, county: r.county })))
+    .slice(0, 5);
+
   return (
     <div className="space-y-8">
-      <SectionTitle eyebrow="Climate-aware lending" title="Climate Intelligence" sub="County-level weather, drought and flood risk." />
+      <SectionTitle eyebrow="Climate-aware lending" title="Climate Intelligence" sub="County-level weather, drought and flood risk · Open-Meteo." />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="High-risk counties" value="3" tone="rose" icon={CloudRain} sub="Garissa, Turkana, Machakos" />
-        <KpiCard label="Drought index" value="0.62" tone="gold" icon={Thermometer} sub="Moderate" />
-        <KpiCard label="Avg rainfall (mm)" value="48" tone="sky" icon={Droplets} sub="Above seasonal" />
-        <KpiCard label="NDVI" value="0.64" tone="emerald" icon={MapIcon} sub="Stable" />
+        <KpiCard label="High-risk counties" value={`${high.length}`} tone="rose" icon={CloudRain} sub={high.map((h) => h.county).join(", ") || "None"} />
+        <KpiCard label="Avg temperature" value={`${avgTemp || "—"} °C`} tone="gold" icon={Thermometer} sub="Across portfolio" />
+        <KpiCard label="Avg rainfall (7d)" value={`${avgRain} mm`} tone="sky" icon={Droplets} sub="County mean" />
+        <KpiCard label="Avg NDVI" value={avgNdvi ? avgNdvi.toFixed(2) : "—"} tone="emerald" icon={MapIcon} sub="Vegetation proxy" />
       </div>
       <Card title="County risk map" icon={MapIcon}>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
-          {COUNTY_TRUST.map((c) => {
-            const color = c.risk === "Low" ? "var(--emerald)" : c.risk === "Med" ? "var(--gold)" : "var(--rose)";
+          {results.map(({ county, data }) => {
+            const risk = data?.droughtIndex ?? "Med";
+            const color = risk === "Low" ? "var(--emerald)" : risk === "Med" ? "var(--gold)" : "var(--rose)";
             return (
-              <div key={c.name} className="rounded-xl p-3 text-xs" style={{ background: `color-mix(in oklab, ${color} 18%, transparent)`, border: `1px solid color-mix(in oklab, ${color} 40%, transparent)` }}>
-                <div className="font-semibold">{c.name}</div>
-                <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">{c.risk} risk</div>
+              <div
+                key={county}
+                className="rounded-xl p-3 text-xs"
+                style={{
+                  background: `color-mix(in oklab, ${color} 18%, transparent)`,
+                  border: `1px solid color-mix(in oklab, ${color} 40%, transparent)`,
+                }}
+              >
+                <div className="font-semibold">{county}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {data ? `${risk} risk · ${data.rainfall7d}mm` : "Loading…"}
+                </div>
               </div>
             );
           })}
@@ -32,16 +71,14 @@ function ClimatePage() {
       </Card>
       <Card title="Active alerts" icon={AlertTriangle}>
         <ul className="space-y-2 text-sm">
-          {[
-            ["Drought intensifying in Machakos & Garissa", "rose"],
-            ["Flood watch issued for Kisumu lakeshore", "sky"],
-            ["Coffee berry disease risk rising in central highlands", "gold"],
-          ].map(([t, tone]) => (
-            <li key={t as string} className="flex items-center justify-between rounded-xl bg-surface-elevated/60 p-3">
-              <span>{t}</span>
-              <Tag label="Climate" tone={tone as "rose" | "sky" | "gold"} />
+          {alerts.length ? alerts.map((a, i) => (
+            <li key={i} className="flex items-center justify-between rounded-xl bg-surface-elevated/60 p-3">
+              <span>{a.t}</span>
+              <Tag label={a.county} tone={a.tone} />
             </li>
-          ))}
+          )) : (
+            <li className="text-xs text-muted-foreground">No active climate alerts across portfolio.</li>
+          )}
         </ul>
       </Card>
     </div>
