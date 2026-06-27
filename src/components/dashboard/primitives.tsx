@@ -361,48 +361,61 @@ export function StatusPill({
   );
 }
 
-export function NetworkGraph({ centerLabel = "Farmer" }: { centerLabel?: string }) {
-  const nodes = [
-    { l: "Cooperative", c: "var(--emerald)" },
-    { l: "Bank", c: "var(--sky)" },
-    { l: "Buyer", c: "var(--gold)" },
-    { l: "Inputs", c: "var(--violet)" },
-    { l: "Weather", c: "var(--sky)" },
-    { l: "Officer", c: "var(--emerald)" },
-    { l: "Market", c: "var(--gold)" },
-    { l: "Neighbor", c: "var(--rose)" },
-  ];
+const TYPE_COLOR: Record<string, string> = {
+  Cooperative: "var(--emerald)",
+  Lender: "var(--sky)",
+  Bank: "var(--sky)",
+  Market: "var(--gold)",
+  Buyer: "var(--gold)",
+  Supplier: "var(--violet)",
+  Inputs: "var(--violet)",
+  Climate: "var(--sky)",
+  Weather: "var(--sky)",
+  Officer: "var(--emerald)",
+  Peer: "var(--rose)",
+  Neighbor: "var(--rose)",
+};
+
+export function NetworkGraph({
+  centerLabel = "Farmer",
+  nodes,
+}: {
+  centerLabel?: string;
+  nodes?: { label: string; type?: string }[];
+}) {
+  const items = (nodes && nodes.length ? nodes : [
+    { label: "Cooperative", type: "Cooperative" },
+    { label: "Bank", type: "Lender" },
+    { label: "Buyer", type: "Market" },
+    { label: "Inputs", type: "Supplier" },
+    { label: "Weather", type: "Climate" },
+    { label: "Officer", type: "Officer" },
+    { label: "Market", type: "Market" },
+    { label: "Neighbor", type: "Peer" },
+  ]).slice(0, 12);
   const cx = 250;
   const cy = 200;
   const radius = 140;
   return (
     <svg viewBox="0 0 500 400" className="w-full">
-      {nodes.map((n, i) => {
-        const a = (i / nodes.length) * Math.PI * 2 - Math.PI / 2;
+      {items.map((n, i) => {
+        const a = (i / items.length) * Math.PI * 2 - Math.PI / 2;
         const x = cx + radius * Math.cos(a);
         const y = cy + radius * Math.sin(a);
+        const color = TYPE_COLOR[n.type ?? ""] ?? "var(--emerald)";
         return (
-          <g key={n.l}>
-            <line
-              x1={cx}
-              y1={cy}
-              x2={x}
-              y2={y}
-              stroke={n.c}
-              strokeOpacity="0.35"
-              strokeWidth="1.2"
-              strokeDasharray="4 4"
-            />
-            <circle cx={x} cy={y} r="22" fill={n.c} fillOpacity="0.18" stroke={n.c} strokeWidth="1.5" />
+          <g key={`${n.label}-${i}`}>
+            <line x1={cx} y1={cy} x2={x} y2={y} stroke={color} strokeOpacity="0.35" strokeWidth="1.2" strokeDasharray="4 4" />
+            <circle cx={x} cy={y} r="22" fill={color} fillOpacity="0.18" stroke={color} strokeWidth="1.5" />
             <text x={x} y={y + 4} textAnchor="middle" fontSize="10" fill="currentColor" className="text-foreground">
-              {n.l}
+              {n.label.length > 14 ? n.label.slice(0, 13) + "…" : n.label}
             </text>
           </g>
         );
       })}
       <circle cx={cx} cy={cy} r="36" fill="oklch(0.72 0.18 155 / 0.25)" stroke="oklch(0.72 0.18 155)" strokeWidth="2" />
       <text x={cx} y={cy + 4} textAnchor="middle" fontSize="12" fontWeight="700" fill="currentColor" className="text-foreground">
-        {centerLabel}
+        {centerLabel.length > 12 ? centerLabel.slice(0, 11) + "…" : centerLabel}
       </text>
     </svg>
   );
