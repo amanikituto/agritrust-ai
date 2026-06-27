@@ -104,6 +104,8 @@ function AuthPage() {
     setError(null);
     setBusy(true);
     try {
+      sessionStorage.setItem("agritust:intent", accountType);
+      sessionStorage.setItem("agritrust:intent", accountType);
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
