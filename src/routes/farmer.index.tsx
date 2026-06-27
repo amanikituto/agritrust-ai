@@ -143,20 +143,20 @@ function FarmerOverview() {
       <section className="grid gap-4 lg:grid-cols-3">
         <Card title="Quick actions" icon={Activity} className="lg:col-span-2">
           <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { i: PlusCircle, l: "Apply for loan" },
-              { i: Upload, l: "Upload records" },
-              { i: Sprout, l: "Record harvest" },
-              { i: Landmark, l: "Mobile money" },
-              { i: CloudRain, l: "View weather" },
-              { i: Users, l: "Request officer" },
-            ].map((a) => (
-              <button key={a.l} className="flex items-center gap-3 rounded-xl bg-surface-elevated/60 p-4 text-left text-sm font-medium transition hover:bg-surface-elevated">
+            {([
+              { i: PlusCircle, l: "Apply for loan", to: "/farmer/loans" },
+              { i: Upload, l: "Upload records", to: "/farmer/farm" },
+              { i: Sprout, l: "Record harvest", to: "/farmer/farm" },
+              { i: Landmark, l: "Marketplace", to: "/farmer/marketplace" },
+              { i: CloudRain, l: "View weather", to: "/farmer/climate" },
+              { i: Users, l: "Network", to: "/farmer/network" },
+            ] as const).map((a) => (
+              <Link key={a.l} to={a.to} className="flex items-center gap-3 rounded-xl bg-surface-elevated/60 p-4 text-left text-sm font-medium transition hover:bg-surface-elevated">
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/10 text-emerald">
                   <a.i className="h-4 w-4" />
                 </span>
                 {a.l}
-              </button>
+              </Link>
             ))}
           </div>
         </Card>
