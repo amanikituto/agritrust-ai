@@ -55,26 +55,46 @@ export const updateFarmerProfile = createServerFn({ method: "POST" })
 export const listFarmersDirectory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: farmers } = await context.supabase
-      .from("farmer_profiles")
-      .select("id, county, cooperative, gender, has_disability, farm_size_acres, crops")
-      .limit(200);
-    const ids = (farmers ?? []).map((f) => f.id);
+    // Start from profiles so newly-registered farmers always appear,
+    // even before they have completed their farm profile or scoring.
+    const { data: profiles } = await context.supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .eq("account_type", "farmer")
+      .limit(500);
+    const ids = (profiles ?? []).map((p) => p.id);
     if (ids.length === 0) return [];
-    const [{ data: profiles }, { data: scores }] = await Promise.all([
-      context.supabase.from("profiles").select("id, full_name, email").in("id", ids),
-      context.supabase.from("trust_scores").select("farmer_id, score, climate_risk, computed_at").in("farmer_id", ids).order("computed_at", { ascending: false }),
+    const [{ data: farmers }, { data: scores }] = await Promise.all([
+      context.supabase
+        .from("farmer_profiles")
+        .select("id, county, cooperative, gender, has_disability, farm_size_acres, crops")
+        .in("id", ids),
+      context.supabase
+        .from("trust_scores")
+        .select("farmer_id, score, climate_risk, computed_at")
+        .in("farmer_id", ids)
+        .order("computed_at", { ascending: false }),
     ]);
-    const pMap = new Map((profiles ?? []).map((p) => [p.id, p]));
+    const fMap = new Map((farmers ?? []).map((f) => [f.id, f]));
     const sMap = new Map<string, { score: number; climate_risk: string }>();
     for (const s of scores ?? []) if (!sMap.has(s.farmer_id)) sMap.set(s.farmer_id, { score: s.score, climate_risk: s.climate_risk });
-    return (farmers ?? []).map((f) => ({
-      ...f,
-      name: pMap.get(f.id)?.full_name ?? "Farmer",
-      email: pMap.get(f.id)?.email ?? null,
-      score: sMap.get(f.id)?.score ?? null,
-      climate_risk: sMap.get(f.id)?.climate_risk ?? null,
-    }));
+    return (profiles ?? []).map((p) => {
+      const f = fMap.get(p.id);
+      return {
+        id: p.id,
+        name: p.full_name ?? "Farmer",
+        email: p.email ?? null,
+        county: f?.county ?? null,
+        cooperative: f?.cooperative ?? null,
+        gender: f?.gender ?? null,
+        has_disability: f?.has_disability ?? false,
+        farm_size_acres: f?.farm_size_acres ?? null,
+        crops: f?.crops ?? [],
+        score: sMap.get(p.id)?.score ?? null,
+        climate_risk: sMap.get(p.id)?.climate_risk ?? null,
+        onboarded: !!f?.county,
+      };
+    });
   });
 
 export const getFarmerDetail = createServerFn({ method: "GET" })
