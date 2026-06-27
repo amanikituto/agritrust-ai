@@ -9,8 +9,8 @@ export const computeMyTrustScore = createServerFn({ method: "POST" })
     const { data: fp } = await context.supabase.from("farmer_profiles").select("*").eq("id", context.userId).maybeSingle();
     const { data: loans } = await context.supabase.from("loan_applications").select("status, amount_kes").eq("farmer_id", context.userId);
 
-    const repaid = (loans ?? []).filter((l) => l.status === "closed").length;
-    const declined = (loans ?? []).filter((l) => l.status === "declined").length;
+    const repaid = (loans ?? []).filter((l) => l.status === "repaid").length;
+    const declined = (loans ?? []).filter((l) => l.status === "rejected").length;
     const total = (loans ?? []).length || 1;
 
     const behavior = Math.min(1, repaid / Math.max(1, total)) * 100;
