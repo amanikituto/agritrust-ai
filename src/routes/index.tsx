@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BarChart3,
   Brain,
+  Building2,
   CloudRain,
   Github,
   Globe2,
@@ -14,6 +15,7 @@ import {
   Shield,
   ShieldCheck,
   Sparkles,
+  Sprout,
   TrendingUp,
   Users,
 } from "lucide-react";
@@ -73,12 +75,27 @@ function Nav() {
           <a href="#partners" className="hover:text-foreground transition-colors">Partners</a>
         </nav>
         <div className="flex items-center gap-2">
-          <button className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground sm:inline-flex">
+          <Link
+            to="/auth"
+            search={{ mode: "signin" }}
+            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground sm:inline-flex"
+          >
             Sign in
-          </button>
-          <button className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
-            Request Demo <ArrowRight className="h-3.5 w-3.5" />
-          </button>
+          </Link>
+          <Link
+            to="/auth"
+            search={{ role: "farmer", mode: "signup" }}
+            className="hidden items-center gap-1.5 rounded-lg glass-strong px-3.5 py-2 text-sm font-semibold transition hover:bg-surface-elevated md:inline-flex"
+          >
+            <Sprout className="h-3.5 w-3.5 text-emerald" /> Farmer
+          </Link>
+          <Link
+            to="/auth"
+            search={{ role: "lender", mode: "signup" }}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110"
+          >
+            <Building2 className="h-3.5 w-3.5" /> Lender Portal
+          </Link>
         </div>
       </div>
     </header>
@@ -126,19 +143,27 @@ function Hero() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110">
-              Request Demo <ArrowRight className="h-4 w-4" />
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-xl glass-strong px-6 py-3.5 text-sm font-semibold text-foreground transition hover:bg-surface-elevated">
-              Explore Platform
-            </button>
+            <Link
+              to="/auth"
+              search={{ role: "farmer", mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-glow transition hover:brightness-110"
+            >
+              <Sprout className="h-4 w-4" /> I'm a Farmer
+            </Link>
+            <Link
+              to="/auth"
+              search={{ role: "lender", mode: "signup" }}
+              className="inline-flex items-center gap-2 rounded-xl glass-strong px-6 py-3.5 text-sm font-semibold text-foreground transition hover:bg-surface-elevated"
+            >
+              <Building2 className="h-4 w-4" /> I'm a Financial Institution
+            </Link>
             <button className="inline-flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm font-medium text-muted-foreground transition hover:text-foreground">
               <PlayCircle className="h-5 w-5" /> Watch demo
             </button>
           </div>
 
           <p className="mt-10 text-xs uppercase tracking-[0.18em] text-muted-foreground/70">
-            Trust is more valuable than collateral
+            Fair finance · Explainable decisions · Inclusive agriculture
           </p>
         </div>
 

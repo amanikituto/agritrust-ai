@@ -40,6 +40,7 @@
   --color-gold: var(--gold);
   --color-orange: var(--orange);
   --color-violet: var(--violet);
+  --color-rose: var(--rose);
   --color-slate-deep: var(--slate-deep);
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
@@ -56,6 +57,7 @@
   --gold: oklch(0.83 0.15 85);
   --orange: oklch(0.74 0.18 50);
   --violet: oklch(0.72 0.15 295);
+  --rose: oklch(0.7 0.2 18);
   --slate-deep: oklch(0.18 0.03 220);
 
   /* Dark theme by default — enterprise AI feel */
@@ -169,4 +171,26 @@
 }
 @keyframes draw {
   to { stroke-dashoffset: 0; }
+}
+
+/* Accessibility overrides */
+:root.a11y-large-text { font-size: 112.5%; }
+:root.a11y-high-contrast {
+  --background: oklch(0.06 0 0);
+  --foreground: oklch(1 0 0);
+  --surface: oklch(0.1 0 0);
+  --surface-elevated: oklch(0.16 0 0);
+  --muted-foreground: oklch(0.9 0 0);
+  --border: oklch(1 0 0 / 0.35);
+}
+:root.a11y-dyslexia, :root.a11y-dyslexia body {
+  font-family: "Atkinson Hyperlegible", "Comic Sans MS", system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+:root.a11y-reduce-motion *,
+:root.a11y-reduce-motion *::before,
+:root.a11y-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
 }
