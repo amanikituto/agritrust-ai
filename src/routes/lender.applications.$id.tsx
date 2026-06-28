@@ -309,6 +309,8 @@ function UnlockedProfile({
         </div>
       </div>
 
+      {profile.assessment && <SignedAssessment a={profile.assessment} />}
+
       {profile.identity && (
         <Card title="Identity & farm" icon={ShieldCheck}>
           <div className="grid gap-3 sm:grid-cols-3 text-sm">
