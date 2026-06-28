@@ -123,7 +123,8 @@ export const computeMyTrustScore = createServerFn({ method: "POST" })
       (negatives.length ? `Areas of attention: ${negatives.slice(0, 2).join(", ")}. ` : "") +
       `Climate risk is ${climate_risk}. Recommended loan ceiling: KES ${loan_eligibility_kes.toLocaleString()}.`;
 
-    const { data, error } = await context.supabase.from("trust_scores").insert({
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin.from("trust_scores").insert({
       farmer_id: context.userId,
       score: composite,
       credit_readiness,
@@ -136,13 +137,14 @@ export const computeMyTrustScore = createServerFn({ method: "POST" })
     }).select().single();
     if (error) throw error;
 
-    await context.supabase.from("audit_events").insert({
+    await supabaseAdmin.from("audit_events").insert({
       actor_id: context.userId,
       action: "trust_score.computed",
       entity_type: "trust_score",
       entity_id: data.id,
       metadata: { composite, components },
     });
+
 
     return data;
   });
