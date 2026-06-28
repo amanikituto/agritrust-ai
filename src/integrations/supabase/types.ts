@@ -244,66 +244,195 @@ export type Database = {
           },
         ]
       }
+      farm_records: {
+        Row: {
+          amount_kes: number | null
+          counterparty: string | null
+          created_at: string
+          farmer_id: string
+          id: string
+          notes: string | null
+          occurred_on: string
+          quantity: number | null
+          record_type: string
+          unit: string | null
+        }
+        Insert: {
+          amount_kes?: number | null
+          counterparty?: string | null
+          created_at?: string
+          farmer_id: string
+          id?: string
+          notes?: string | null
+          occurred_on?: string
+          quantity?: number | null
+          record_type: string
+          unit?: string | null
+        }
+        Update: {
+          amount_kes?: number | null
+          counterparty?: string | null
+          created_at?: string
+          farmer_id?: string
+          id?: string
+          notes?: string | null
+          occurred_on?: string
+          quantity?: number | null
+          record_type?: string
+          unit?: string | null
+        }
+        Relationships: []
+      }
       farmer_profiles: {
         Row: {
+          adaptation_practices: string[] | null
+          climate_risks: string[] | null
+          consent_at: string | null
+          consent_data_use: boolean | null
+          controls_income: boolean | null
+          coop_role: string | null
+          coop_years: number | null
           cooperative: string | null
           county: string | null
           created_at: string
           crops: string[] | null
           date_of_birth: string | null
           disability_details: string | null
+          extension_visits_per_year: number | null
+          faces_credit_barriers: boolean | null
           farm_size_acres: number | null
           gender: Database["public"]["Enums"]["gender_type"] | null
           has_disability: boolean | null
+          has_insurance: boolean | null
           household_size: number | null
           id: string
+          in_disability_group: boolean | null
+          in_women_group: boolean | null
+          in_youth_group: boolean | null
+          inclusion_notes: string | null
+          input_suppliers: string[] | null
+          intake_completed: boolean | null
+          irrigation: boolean | null
           is_youth: boolean | null
+          land_ownership: string | null
           livestock: string[] | null
+          main_buyers: string[] | null
+          mechanization: string | null
           mobile_money_provider: string | null
           national_id: string | null
+          owns_phone: boolean | null
+          peer_guarantee: boolean | null
+          primary_decision_maker: boolean | null
+          primary_language: string | null
+          production_estimate: string | null
+          savings_method: string | null
+          storage: string | null
           sub_county: string | null
           updated_at: string
+          uses_mobile_money: boolean | null
           ward: string | null
+          water_access: string | null
+          years_farming: number | null
         }
         Insert: {
+          adaptation_practices?: string[] | null
+          climate_risks?: string[] | null
+          consent_at?: string | null
+          consent_data_use?: boolean | null
+          controls_income?: boolean | null
+          coop_role?: string | null
+          coop_years?: number | null
           cooperative?: string | null
           county?: string | null
           created_at?: string
           crops?: string[] | null
           date_of_birth?: string | null
           disability_details?: string | null
+          extension_visits_per_year?: number | null
+          faces_credit_barriers?: boolean | null
           farm_size_acres?: number | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           has_disability?: boolean | null
+          has_insurance?: boolean | null
           household_size?: number | null
           id: string
+          in_disability_group?: boolean | null
+          in_women_group?: boolean | null
+          in_youth_group?: boolean | null
+          inclusion_notes?: string | null
+          input_suppliers?: string[] | null
+          intake_completed?: boolean | null
+          irrigation?: boolean | null
           is_youth?: boolean | null
+          land_ownership?: string | null
           livestock?: string[] | null
+          main_buyers?: string[] | null
+          mechanization?: string | null
           mobile_money_provider?: string | null
           national_id?: string | null
+          owns_phone?: boolean | null
+          peer_guarantee?: boolean | null
+          primary_decision_maker?: boolean | null
+          primary_language?: string | null
+          production_estimate?: string | null
+          savings_method?: string | null
+          storage?: string | null
           sub_county?: string | null
           updated_at?: string
+          uses_mobile_money?: boolean | null
           ward?: string | null
+          water_access?: string | null
+          years_farming?: number | null
         }
         Update: {
+          adaptation_practices?: string[] | null
+          climate_risks?: string[] | null
+          consent_at?: string | null
+          consent_data_use?: boolean | null
+          controls_income?: boolean | null
+          coop_role?: string | null
+          coop_years?: number | null
           cooperative?: string | null
           county?: string | null
           created_at?: string
           crops?: string[] | null
           date_of_birth?: string | null
           disability_details?: string | null
+          extension_visits_per_year?: number | null
+          faces_credit_barriers?: boolean | null
           farm_size_acres?: number | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           has_disability?: boolean | null
+          has_insurance?: boolean | null
           household_size?: number | null
           id?: string
+          in_disability_group?: boolean | null
+          in_women_group?: boolean | null
+          in_youth_group?: boolean | null
+          inclusion_notes?: string | null
+          input_suppliers?: string[] | null
+          intake_completed?: boolean | null
+          irrigation?: boolean | null
           is_youth?: boolean | null
+          land_ownership?: string | null
           livestock?: string[] | null
+          main_buyers?: string[] | null
+          mechanization?: string | null
           mobile_money_provider?: string | null
           national_id?: string | null
+          owns_phone?: boolean | null
+          peer_guarantee?: boolean | null
+          primary_decision_maker?: boolean | null
+          primary_language?: string | null
+          production_estimate?: string | null
+          savings_method?: string | null
+          storage?: string | null
           sub_county?: string | null
           updated_at?: string
+          uses_mobile_money?: boolean | null
           ward?: string | null
+          water_access?: string | null
+          years_farming?: number | null
         }
         Relationships: []
       }
@@ -358,6 +487,7 @@ export type Database = {
           lender_id: string | null
           purpose: string | null
           reviewer_notes: string | null
+          source: string | null
           status: Database["public"]["Enums"]["loan_status"]
           term_months: number
           top_negative_factors: string[] | null
@@ -376,6 +506,7 @@ export type Database = {
           lender_id?: string | null
           purpose?: string | null
           reviewer_notes?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["loan_status"]
           term_months?: number
           top_negative_factors?: string[] | null
@@ -394,6 +525,7 @@ export type Database = {
           lender_id?: string | null
           purpose?: string | null
           reviewer_notes?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["loan_status"]
           term_months?: number
           top_negative_factors?: string[] | null
@@ -663,6 +795,8 @@ export type Database = {
         | "disbursed"
         | "repaid"
         | "defaulted"
+        | "approved_with_conditions"
+        | "needs_info"
       notification_type:
         | "rain_alert"
         | "loan_approval"
@@ -829,6 +963,8 @@ export const Constants = {
         "disbursed",
         "repaid",
         "defaulted",
+        "approved_with_conditions",
+        "needs_info",
       ],
       notification_type: [
         "rain_alert",
