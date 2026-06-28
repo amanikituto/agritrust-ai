@@ -39,7 +39,10 @@ function ApplicationsList() {
               <tbody className="divide-y divide-border/60">
                 {(apps.data ?? []).map((a) => (
                   <tr key={a.id} className="hover:bg-surface-elevated/40">
-                    <td className="px-3 py-3 font-medium">{a.farmer_name}</td>
+                    <td className="px-3 py-3 font-medium">
+                      <span>{a.farmer_name}</span>
+                      {(a as any).source === "ussd" && <Tag label="USSD" tone="violet" />}
+                    </td>
                     <td className="px-3 py-3 text-muted-foreground">{a.county}</td>
                     <td className="px-3 py-3 font-semibold">{a.trust_score_snapshot ?? "—"}</td>
                     <td className="px-3 py-3">

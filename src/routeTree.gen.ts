@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UssdSimRouteImport } from './routes/ussd-sim'
 import { Route as LenderRouteImport } from './routes/lender'
 import { Route as FarmerRouteImport } from './routes/farmer'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -30,11 +31,13 @@ import { Route as LenderApplicationsRouteImport } from './routes/lender.applicat
 import { Route as FarmerTrustScoreRouteImport } from './routes/farmer.trust-score'
 import { Route as FarmerSettingsRouteImport } from './routes/farmer.settings'
 import { Route as FarmerReportsRouteImport } from './routes/farmer.reports'
+import { Route as FarmerRecordsRouteImport } from './routes/farmer.records'
 import { Route as FarmerProfileRouteImport } from './routes/farmer.profile'
 import { Route as FarmerNotificationsRouteImport } from './routes/farmer.notifications'
 import { Route as FarmerNetworkRouteImport } from './routes/farmer.network'
 import { Route as FarmerMarketplaceRouteImport } from './routes/farmer.marketplace'
 import { Route as FarmerLoansRouteImport } from './routes/farmer.loans'
+import { Route as FarmerIntakeRouteImport } from './routes/farmer.intake'
 import { Route as FarmerFarmRouteImport } from './routes/farmer.farm'
 import { Route as FarmerCreditRouteImport } from './routes/farmer.credit'
 import { Route as FarmerCooperativeRouteImport } from './routes/farmer.cooperative'
@@ -47,6 +50,11 @@ import { Route as ApiPublicUssdRouteImport } from './routes/api/public/ussd'
 import { Route as ApiPublicAgentInvokeRouteImport } from './routes/api/public/agent/invoke'
 import { Route as ApiPublicAgentDiscoverRouteImport } from './routes/api/public/agent/discover'
 
+const UssdSimRoute = UssdSimRouteImport.update({
+  id: '/ussd-sim',
+  path: '/ussd-sim',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LenderRoute = LenderRouteImport.update({
   id: '/lender',
   path: '/lender',
@@ -152,6 +160,11 @@ const FarmerReportsRoute = FarmerReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => FarmerRoute,
 } as any)
+const FarmerRecordsRoute = FarmerRecordsRouteImport.update({
+  id: '/records',
+  path: '/records',
+  getParentRoute: () => FarmerRoute,
+} as any)
 const FarmerProfileRoute = FarmerProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -175,6 +188,11 @@ const FarmerMarketplaceRoute = FarmerMarketplaceRouteImport.update({
 const FarmerLoansRoute = FarmerLoansRouteImport.update({
   id: '/loans',
   path: '/loans',
+  getParentRoute: () => FarmerRoute,
+} as any)
+const FarmerIntakeRoute = FarmerIntakeRouteImport.update({
+  id: '/intake',
+  path: '/intake',
   getParentRoute: () => FarmerRoute,
 } as any)
 const FarmerFarmRoute = FarmerFarmRouteImport.update({
@@ -238,17 +256,20 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/farmer': typeof FarmerRouteWithChildren
   '/lender': typeof LenderRouteWithChildren
+  '/ussd-sim': typeof UssdSimRoute
   '/farmer/analytics': typeof FarmerAnalyticsRoute
   '/farmer/assistant': typeof FarmerAssistantRoute
   '/farmer/climate': typeof FarmerClimateRoute
   '/farmer/cooperative': typeof FarmerCooperativeRoute
   '/farmer/credit': typeof FarmerCreditRoute
   '/farmer/farm': typeof FarmerFarmRoute
+  '/farmer/intake': typeof FarmerIntakeRoute
   '/farmer/loans': typeof FarmerLoansRoute
   '/farmer/marketplace': typeof FarmerMarketplaceRoute
   '/farmer/network': typeof FarmerNetworkRoute
   '/farmer/notifications': typeof FarmerNotificationsRoute
   '/farmer/profile': typeof FarmerProfileRoute
+  '/farmer/records': typeof FarmerRecordsRoute
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
@@ -275,17 +296,20 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ussd-sim': typeof UssdSimRoute
   '/farmer/analytics': typeof FarmerAnalyticsRoute
   '/farmer/assistant': typeof FarmerAssistantRoute
   '/farmer/climate': typeof FarmerClimateRoute
   '/farmer/cooperative': typeof FarmerCooperativeRoute
   '/farmer/credit': typeof FarmerCreditRoute
   '/farmer/farm': typeof FarmerFarmRoute
+  '/farmer/intake': typeof FarmerIntakeRoute
   '/farmer/loans': typeof FarmerLoansRoute
   '/farmer/marketplace': typeof FarmerMarketplaceRoute
   '/farmer/network': typeof FarmerNetworkRoute
   '/farmer/notifications': typeof FarmerNotificationsRoute
   '/farmer/profile': typeof FarmerProfileRoute
+  '/farmer/records': typeof FarmerRecordsRoute
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
@@ -315,17 +339,20 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/farmer': typeof FarmerRouteWithChildren
   '/lender': typeof LenderRouteWithChildren
+  '/ussd-sim': typeof UssdSimRoute
   '/farmer/analytics': typeof FarmerAnalyticsRoute
   '/farmer/assistant': typeof FarmerAssistantRoute
   '/farmer/climate': typeof FarmerClimateRoute
   '/farmer/cooperative': typeof FarmerCooperativeRoute
   '/farmer/credit': typeof FarmerCreditRoute
   '/farmer/farm': typeof FarmerFarmRoute
+  '/farmer/intake': typeof FarmerIntakeRoute
   '/farmer/loans': typeof FarmerLoansRoute
   '/farmer/marketplace': typeof FarmerMarketplaceRoute
   '/farmer/network': typeof FarmerNetworkRoute
   '/farmer/notifications': typeof FarmerNotificationsRoute
   '/farmer/profile': typeof FarmerProfileRoute
+  '/farmer/records': typeof FarmerRecordsRoute
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
@@ -356,17 +383,20 @@ export interface FileRouteTypes {
     | '/auth'
     | '/farmer'
     | '/lender'
+    | '/ussd-sim'
     | '/farmer/analytics'
     | '/farmer/assistant'
     | '/farmer/climate'
     | '/farmer/cooperative'
     | '/farmer/credit'
     | '/farmer/farm'
+    | '/farmer/intake'
     | '/farmer/loans'
     | '/farmer/marketplace'
     | '/farmer/network'
     | '/farmer/notifications'
     | '/farmer/profile'
+    | '/farmer/records'
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
@@ -393,17 +423,20 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/ussd-sim'
     | '/farmer/analytics'
     | '/farmer/assistant'
     | '/farmer/climate'
     | '/farmer/cooperative'
     | '/farmer/credit'
     | '/farmer/farm'
+    | '/farmer/intake'
     | '/farmer/loans'
     | '/farmer/marketplace'
     | '/farmer/network'
     | '/farmer/notifications'
     | '/farmer/profile'
+    | '/farmer/records'
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
@@ -432,17 +465,20 @@ export interface FileRouteTypes {
     | '/auth'
     | '/farmer'
     | '/lender'
+    | '/ussd-sim'
     | '/farmer/analytics'
     | '/farmer/assistant'
     | '/farmer/climate'
     | '/farmer/cooperative'
     | '/farmer/credit'
     | '/farmer/farm'
+    | '/farmer/intake'
     | '/farmer/loans'
     | '/farmer/marketplace'
     | '/farmer/network'
     | '/farmer/notifications'
     | '/farmer/profile'
+    | '/farmer/records'
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
@@ -472,6 +508,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   FarmerRoute: typeof FarmerRouteWithChildren
   LenderRoute: typeof LenderRouteWithChildren
+  UssdSimRoute: typeof UssdSimRoute
   ApiPublicUssdRoute: typeof ApiPublicUssdRoute
   ApiPublicAgentDiscoverRoute: typeof ApiPublicAgentDiscoverRoute
   ApiPublicAgentInvokeRoute: typeof ApiPublicAgentInvokeRoute
@@ -479,6 +516,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/ussd-sim': {
+      id: '/ussd-sim'
+      path: '/ussd-sim'
+      fullPath: '/ussd-sim'
+      preLoaderRoute: typeof UssdSimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lender': {
       id: '/lender'
       path: '/lender'
@@ -626,6 +670,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FarmerReportsRouteImport
       parentRoute: typeof FarmerRoute
     }
+    '/farmer/records': {
+      id: '/farmer/records'
+      path: '/records'
+      fullPath: '/farmer/records'
+      preLoaderRoute: typeof FarmerRecordsRouteImport
+      parentRoute: typeof FarmerRoute
+    }
     '/farmer/profile': {
       id: '/farmer/profile'
       path: '/profile'
@@ -659,6 +710,13 @@ declare module '@tanstack/react-router' {
       path: '/loans'
       fullPath: '/farmer/loans'
       preLoaderRoute: typeof FarmerLoansRouteImport
+      parentRoute: typeof FarmerRoute
+    }
+    '/farmer/intake': {
+      id: '/farmer/intake'
+      path: '/intake'
+      fullPath: '/farmer/intake'
+      preLoaderRoute: typeof FarmerIntakeRouteImport
       parentRoute: typeof FarmerRoute
     }
     '/farmer/farm': {
@@ -748,11 +806,13 @@ interface FarmerRouteChildren {
   FarmerCooperativeRoute: typeof FarmerCooperativeRoute
   FarmerCreditRoute: typeof FarmerCreditRoute
   FarmerFarmRoute: typeof FarmerFarmRoute
+  FarmerIntakeRoute: typeof FarmerIntakeRoute
   FarmerLoansRoute: typeof FarmerLoansRoute
   FarmerMarketplaceRoute: typeof FarmerMarketplaceRoute
   FarmerNetworkRoute: typeof FarmerNetworkRoute
   FarmerNotificationsRoute: typeof FarmerNotificationsRoute
   FarmerProfileRoute: typeof FarmerProfileRoute
+  FarmerRecordsRoute: typeof FarmerRecordsRoute
   FarmerReportsRoute: typeof FarmerReportsRoute
   FarmerSettingsRoute: typeof FarmerSettingsRoute
   FarmerTrustScoreRoute: typeof FarmerTrustScoreRoute
@@ -766,11 +826,13 @@ const FarmerRouteChildren: FarmerRouteChildren = {
   FarmerCooperativeRoute: FarmerCooperativeRoute,
   FarmerCreditRoute: FarmerCreditRoute,
   FarmerFarmRoute: FarmerFarmRoute,
+  FarmerIntakeRoute: FarmerIntakeRoute,
   FarmerLoansRoute: FarmerLoansRoute,
   FarmerMarketplaceRoute: FarmerMarketplaceRoute,
   FarmerNetworkRoute: FarmerNetworkRoute,
   FarmerNotificationsRoute: FarmerNotificationsRoute,
   FarmerProfileRoute: FarmerProfileRoute,
+  FarmerRecordsRoute: FarmerRecordsRoute,
   FarmerReportsRoute: FarmerReportsRoute,
   FarmerSettingsRoute: FarmerSettingsRoute,
   FarmerTrustScoreRoute: FarmerTrustScoreRoute,
@@ -843,6 +905,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   FarmerRoute: FarmerRouteWithChildren,
   LenderRoute: LenderRouteWithChildren,
+  UssdSimRoute: UssdSimRoute,
   ApiPublicUssdRoute: ApiPublicUssdRoute,
   ApiPublicAgentDiscoverRoute: ApiPublicAgentDiscoverRoute,
   ApiPublicAgentInvokeRoute: ApiPublicAgentInvokeRoute,

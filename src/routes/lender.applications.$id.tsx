@@ -112,7 +112,7 @@ function DecisionWorkspace() {
   });
 
   const decide = useMutation({
-    mutationFn: (decision: "approved" | "rejected" | "under_review") =>
+    mutationFn: (decision: "approved" | "approved_with_conditions" | "needs_info" | "rejected" | "under_review") =>
       decideFn({ data: { id, decision, notes } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["app", id] });
@@ -221,9 +221,11 @@ function DecisionWorkspace() {
           className="mb-4 w-full rounded-md border border-border/60 bg-surface-elevated/60 p-3 text-sm"
           rows={3}
         />
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {([
             { l: "Approve", d: "approved" as const, Icon: CheckCircle2 },
+            { l: "Approve w/ conditions", d: "approved_with_conditions" as const, Icon: ShieldCheck },
+            { l: "Request info", d: "needs_info" as const, Icon: Brain },
             { l: "Manual review", d: "under_review" as const, Icon: Brain },
             { l: "Reject", d: "rejected" as const, Icon: XCircle },
           ]).map(({ l, d, Icon }) => (
@@ -231,7 +233,7 @@ function DecisionWorkspace() {
               key={l}
               disabled={decide.isPending || !isUnlocked}
               onClick={() => decide.mutate(d)}
-              className="flex items-center justify-center gap-2 rounded-xl border border-border/40 bg-surface-elevated/60 px-4 py-3 text-sm font-semibold transition hover:bg-surface-elevated disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-xl border border-border/40 bg-surface-elevated/60 px-3 py-3 text-xs font-semibold transition hover:bg-surface-elevated disabled:opacity-50"
             >
               <Icon className="h-4 w-4" /> {l}
             </button>
@@ -239,7 +241,7 @@ function DecisionWorkspace() {
         </div>
         {decide.data && (
           <div className="mt-4 rounded-xl bg-emerald/10 p-3 text-sm text-emerald">
-            Status updated to <strong>{decide.data.status}</strong>. Farmer notified.
+            Status updated to <strong>{decide.data.status.replaceAll("_", " ")}</strong>. Farmer notified.
           </div>
         )}
         {decide.error && <p className="mt-2 text-xs text-rose">{(decide.error as Error).message}</p>}
@@ -331,18 +333,30 @@ function UnlockedProfile({
         </Card>
       )}
 
-      <Card title="Application factors" icon={Brain}>
-        <div className="grid gap-3 sm:grid-cols-2 text-sm">
+      <Card title="Explainability · the four questions" icon={Brain}>
+        <div className="grid gap-4 sm:grid-cols-2 text-sm">
           <div>
-            <p className="text-xs uppercase tracking-wider text-emerald">Positive</p>
-            <ul className="mt-2 space-y-1 text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">1. Why did the farmer receive this score?</p>
+            <p className="mt-1">Composite score reflects repayment, cooperative, production, mobile money, savings, inputs, training, climate resilience and insurance signals weighted per AFRACA guidance. Inclusion attributes (gender, age, disability, land ownership) are never used as negative factors.</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">2. What can the farmer do to improve?</p>
+            <ul className="mt-1 space-y-0.5 text-muted-foreground">
+              <li>• Add crop or livestock insurance</li>
+              <li>• Log more sales and repayments via Record Updates</li>
+              <li>• Attend training / extension visits</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-emerald">3. Signals that increased confidence</p>
+            <ul className="mt-1 space-y-1 text-muted-foreground">
               {positiveFactors.map((f) => <li key={f}>+ {f}</li>)}
               {positiveFactors.length === 0 && <li>—</li>}
             </ul>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-rose">Negative</p>
-            <ul className="mt-2 space-y-1 text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-rose">4. Signals that reduced confidence</p>
+            <ul className="mt-1 space-y-1 text-muted-foreground">
               {negativeFactors.map((f) => <li key={f}>− {f}</li>)}
               {negativeFactors.length === 0 && <li>—</li>}
             </ul>
