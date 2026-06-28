@@ -38,7 +38,7 @@ function IntakePage() {
 
   // Hydrate once from existing profile
   if (me.data && Object.keys(form).length === 0 && (me.data.farmer || me.data.profile)) {
-    const f = me.data.farmer ?? {};
+    const f: any = me.data.farmer ?? {};
     setForm({
       full_name: me.data.profile?.full_name ?? "",
       phone: me.data.profile?.phone ?? "",
