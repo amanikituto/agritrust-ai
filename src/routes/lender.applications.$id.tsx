@@ -414,3 +414,48 @@ function UnlockedProfile({
     </>
   );
 }
+
+function SignedAssessment({ a }: { a: AgritrustAssessment }) {
+  const confidencePct = Math.round((a.confidence_level ?? 0) * 100);
+  return (
+    <Card
+      title="Signed assessment · AgriTrust Agent"
+      icon={Brain}
+      action={
+        <Tag
+          label={a.reasoning_source === "lovable-ai" ? "Explainable AI" : "Fallback reasoning"}
+          tone={a.reasoning_source === "lovable-ai" ? "emerald" : "gold"}
+        />
+      }
+    >
+      <div className="grid gap-3 sm:grid-cols-4">
+        <KpiCard label="Trust score" value={`${a.farmer_trust_score}/100`} tone="emerald" icon={ShieldCheck} />
+        <KpiCard label="Credit risk" value={`${a.credit_risk_score}/100`} tone={a.credit_risk_score >= 60 ? "rose" : a.credit_risk_score >= 30 ? "gold" : "emerald"} icon={Brain} />
+        <KpiCard label="Recommended limit" value={`KES ${a.recommended_lending_limit_kes.toLocaleString()}`} tone="sky" icon={Wallet} />
+        <KpiCard label="Confidence" value={`${confidencePct}%`} tone={confidencePct >= 70 ? "emerald" : "gold"} icon={BadgeCheck} />
+      </div>
+
+      <div className="mt-4 rounded-xl bg-surface-elevated/60 p-4 text-sm leading-relaxed">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">AI risk explanation</div>
+        {a.risk_explanation || "—"}
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 text-sm">
+        <div>
+          <div className="text-xs uppercase tracking-wider text-emerald mb-1">Positive factors</div>
+          <ul className="space-y-1 text-muted-foreground">
+            {a.positive_factors.map((f) => <li key={f}>+ {f}</li>)}
+            {a.positive_factors.length === 0 && <li>—</li>}
+          </ul>
+        </div>
+        <div>
+          <div className="text-xs uppercase tracking-wider text-rose mb-1">Negative factors</div>
+          <ul className="space-y-1 text-muted-foreground">
+            {a.negative_factors.map((f) => <li key={f}>− {f}</li>)}
+            {a.negative_factors.length === 0 && <li>—</li>}
+          </ul>
+        </div>
+      </div>
+    </Card>
+  );
+}
