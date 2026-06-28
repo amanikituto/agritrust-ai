@@ -98,3 +98,20 @@ function FarmersDirectory() {
     </div>
   );
 }
+
+function FilterGroup({ label, value, setValue, options, icon }: {
+  label: string; value: string; setValue: (v: string) => void; options: string[]; icon?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-1.5 rounded-lg bg-surface-elevated/60 p-1 text-xs">
+      {icon && <SlidersHorizontal className="ml-2 h-3.5 w-3.5 text-muted-foreground" />}
+      <span className="ml-1 mr-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
+      {options.map((c) => (
+        <button key={c} onClick={() => setValue(c)}
+          className={`rounded-md px-2.5 py-1 font-semibold transition ${value === c ? "bg-background text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+          {c === "All" ? "All" : c[0].toUpperCase() + c.slice(1)}
+        </button>
+      ))}
+    </div>
+  );
+}
