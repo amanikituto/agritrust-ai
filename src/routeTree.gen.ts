@@ -27,6 +27,7 @@ import { Route as LenderExplainabilityRouteImport } from './routes/lender.explai
 import { Route as LenderClimateRouteImport } from './routes/lender.climate'
 import { Route as LenderAssistantRouteImport } from './routes/lender.assistant'
 import { Route as LenderApplicationsRouteImport } from './routes/lender.applications'
+import { Route as FarmerUssdRouteImport } from './routes/farmer.ussd'
 import { Route as FarmerTrustScoreRouteImport } from './routes/farmer.trust-score'
 import { Route as FarmerSettingsRouteImport } from './routes/farmer.settings'
 import { Route as FarmerReportsRouteImport } from './routes/farmer.reports'
@@ -139,6 +140,11 @@ const LenderApplicationsRoute = LenderApplicationsRouteImport.update({
   id: '/applications',
   path: '/applications',
   getParentRoute: () => LenderRoute,
+} as any)
+const FarmerUssdRoute = FarmerUssdRouteImport.update({
+  id: '/ussd',
+  path: '/ussd',
+  getParentRoute: () => FarmerRoute,
 } as any)
 const FarmerTrustScoreRoute = FarmerTrustScoreRouteImport.update({
   id: '/trust-score',
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/farmer/ussd': typeof FarmerUssdRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
@@ -313,6 +320,7 @@ export interface FileRoutesByTo {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/farmer/ussd': typeof FarmerUssdRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
@@ -356,6 +364,7 @@ export interface FileRoutesById {
   '/farmer/reports': typeof FarmerReportsRoute
   '/farmer/settings': typeof FarmerSettingsRoute
   '/farmer/trust-score': typeof FarmerTrustScoreRoute
+  '/farmer/ussd': typeof FarmerUssdRoute
   '/lender/applications': typeof LenderApplicationsRouteWithChildren
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
@@ -400,6 +409,7 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
+    | '/farmer/ussd'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
+    | '/farmer/ussd'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
@@ -482,6 +493,7 @@ export interface FileRouteTypes {
     | '/farmer/reports'
     | '/farmer/settings'
     | '/farmer/trust-score'
+    | '/farmer/ussd'
     | '/lender/applications'
     | '/lender/assistant'
     | '/lender/climate'
@@ -641,6 +653,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/lender/applications'
       preLoaderRoute: typeof LenderApplicationsRouteImport
       parentRoute: typeof LenderRoute
+    }
+    '/farmer/ussd': {
+      id: '/farmer/ussd'
+      path: '/ussd'
+      fullPath: '/farmer/ussd'
+      preLoaderRoute: typeof FarmerUssdRouteImport
+      parentRoute: typeof FarmerRoute
     }
     '/farmer/trust-score': {
       id: '/farmer/trust-score'
@@ -816,6 +835,7 @@ interface FarmerRouteChildren {
   FarmerReportsRoute: typeof FarmerReportsRoute
   FarmerSettingsRoute: typeof FarmerSettingsRoute
   FarmerTrustScoreRoute: typeof FarmerTrustScoreRoute
+  FarmerUssdRoute: typeof FarmerUssdRoute
   FarmerIndexRoute: typeof FarmerIndexRoute
 }
 
@@ -836,6 +856,7 @@ const FarmerRouteChildren: FarmerRouteChildren = {
   FarmerReportsRoute: FarmerReportsRoute,
   FarmerSettingsRoute: FarmerSettingsRoute,
   FarmerTrustScoreRoute: FarmerTrustScoreRoute,
+  FarmerUssdRoute: FarmerUssdRoute,
   FarmerIndexRoute: FarmerIndexRoute,
 }
 
