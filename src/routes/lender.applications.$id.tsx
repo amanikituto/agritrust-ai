@@ -333,7 +333,7 @@ function UnlockedProfile({
         </Card>
       )}
 
-      <Card title="Application factors" icon={Brain}>
+      <Card title="Explainability · the four questions" icon={Brain}>
         <div className="grid gap-3 sm:grid-cols-2 text-sm">
           <div>
             <p className="text-xs uppercase tracking-wider text-emerald">Positive</p>
