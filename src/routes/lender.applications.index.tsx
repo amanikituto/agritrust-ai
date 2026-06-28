@@ -5,7 +5,7 @@ import { Accessibility, Eye } from "lucide-react";
 import { Card, SectionTitle, Tag } from "@/components/dashboard/primitives";
 import { listAllApplications } from "@/lib/loans.functions";
 
-export const Route = createFileRoute("/lender/applications")({
+export const Route = createFileRoute("/lender/applications/")({
   component: ApplicationsList,
 });
 
