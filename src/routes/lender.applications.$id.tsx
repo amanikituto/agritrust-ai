@@ -30,6 +30,17 @@ type Tier = "basic" | "standard" | "premium";
 // always shows correct KES amounts even if listAgentInfo() is still loading.
 const FALLBACK_PRICING: Record<Tier, number> = { basic: 50, standard: 150, premium: 400 };
 
+interface AgritrustAssessment {
+  farmer_trust_score: number;
+  credit_risk_score: number;
+  recommended_lending_limit_kes: number;
+  confidence_level: number;
+  risk_explanation: string;
+  positive_factors: string[];
+  negative_factors: string[];
+  reasoning_source: "lovable-ai" | "fallback";
+}
+
 interface AgritrustProfile {
   farmer_id: string;
   tier: Tier;
@@ -37,6 +48,7 @@ interface AgritrustProfile {
   components: { mobile_money: number; coop: number; repayment: number; farm_data: number };
   climate_penalty: number;
   recommendation: "approve" | "review" | "decline";
+  assessment: AgritrustAssessment;
   identity?: { name: string; county: string | null };
   farm?: { size_acres: number | null; crops: string[]; cooperative: string | null };
   graph_signals?: { degree: number; coop_members: number; source: "neo4j" | "fallback" };
