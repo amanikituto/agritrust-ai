@@ -64,7 +64,7 @@ export const listAllApplications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("loan_applications")
-      .select("id, farmer_id, amount_kes, term_months, purpose, status, trust_score_snapshot, climate_risk_snapshot, ai_recommendation, ai_confidence, top_positive_factors, top_negative_factors, created_at")
+      .select("id, farmer_id, amount_kes, term_months, purpose, status, source, trust_score_snapshot, climate_risk_snapshot, ai_recommendation, ai_confidence, top_positive_factors, top_negative_factors, created_at")
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw error;
