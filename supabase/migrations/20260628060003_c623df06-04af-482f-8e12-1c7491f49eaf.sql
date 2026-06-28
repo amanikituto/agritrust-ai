@@ -1,0 +1,2 @@
+CREATE POLICY "Trust scores: farmer inserts own" ON public.trust_scores FOR INSERT TO authenticated WITH CHECK (auth.uid() = farmer_id);
+CREATE POLICY "Trust scores: farmer updates own" ON public.trust_scores FOR UPDATE TO authenticated USING (auth.uid() = farmer_id) WITH CHECK (auth.uid() = farmer_id);
