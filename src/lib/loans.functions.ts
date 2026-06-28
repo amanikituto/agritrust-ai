@@ -285,13 +285,15 @@ export const decideApplication = createServerFn({ method: "POST" })
       body: data.notes ?? `Your application was ${data.decision.replaceAll("_", " ")}.`,
     });
 
-    await context.supabase.from("audit_events").insert({
+    const { supabaseAdmin: _adminL } = await import("@/integrations/supabase/client.server");
+    await _adminL.from("audit_events").insert({
       actor_id: context.userId,
       action: "loan.decision",
       entity_type: "loan_application",
       entity_id: row.id,
       metadata: { decision: data.decision },
     });
+
 
     return row;
   });

@@ -83,13 +83,15 @@ export const purchaseProduct = createServerFn({ method: "POST" })
       .single();
     if (error) throw error;
 
-    await context.supabase.from("audit_events").insert({
+    const { supabaseAdmin: _adminA } = await import("@/integrations/supabase/client.server");
+    await _adminA.from("audit_events").insert({
       actor_id: context.userId,
       action: "data.purchase",
       entity_type: "data_purchase",
       entity_id: purchase.id,
       metadata: { product_type: product.product_type, amount_kes: product.price_kes },
     });
+
 
     // Fire-and-forget Neo4j edge
     try {
