@@ -27,6 +27,8 @@ import type { NavItem } from "@/components/dashboard/DashShell";
 
 export const FARMER_NAV: NavItem[] = [
   { to: "/farmer", label: "Overview", icon: Home },
+  { to: "/farmer/intake", label: "Intake Form", icon: User },
+  { to: "/farmer/records", label: "Record Updates", icon: FileText },
   { to: "/farmer/profile", label: "My Profile", icon: User },
   { to: "/farmer/farm", label: "Farm Profile", icon: Sprout },
   { to: "/farmer/trust-score", label: "Trust Score", icon: ShieldCheck },
