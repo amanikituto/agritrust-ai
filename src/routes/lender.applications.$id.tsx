@@ -221,9 +221,11 @@ function DecisionWorkspace() {
           className="mb-4 w-full rounded-md border border-border/60 bg-surface-elevated/60 p-3 text-sm"
           rows={3}
         />
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {([
             { l: "Approve", d: "approved" as const, Icon: CheckCircle2 },
+            { l: "Approve w/ conditions", d: "approved_with_conditions" as const, Icon: ShieldCheck },
+            { l: "Request info", d: "needs_info" as const, Icon: Brain },
             { l: "Manual review", d: "under_review" as const, Icon: Brain },
             { l: "Reject", d: "rejected" as const, Icon: XCircle },
           ]).map(({ l, d, Icon }) => (
@@ -231,7 +233,7 @@ function DecisionWorkspace() {
               key={l}
               disabled={decide.isPending || !isUnlocked}
               onClick={() => decide.mutate(d)}
-              className="flex items-center justify-center gap-2 rounded-xl border border-border/40 bg-surface-elevated/60 px-4 py-3 text-sm font-semibold transition hover:bg-surface-elevated disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-xl border border-border/40 bg-surface-elevated/60 px-3 py-3 text-xs font-semibold transition hover:bg-surface-elevated disabled:opacity-50"
             >
               <Icon className="h-4 w-4" /> {l}
             </button>
@@ -239,7 +241,7 @@ function DecisionWorkspace() {
         </div>
         {decide.data && (
           <div className="mt-4 rounded-xl bg-emerald/10 p-3 text-sm text-emerald">
-            Status updated to <strong>{decide.data.status}</strong>. Farmer notified.
+            Status updated to <strong>{decide.data.status.replaceAll("_", " ")}</strong>. Farmer notified.
           </div>
         )}
         {decide.error && <p className="mt-2 text-xs text-rose">{(decide.error as Error).message}</p>}
