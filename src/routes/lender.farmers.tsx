@@ -16,6 +16,8 @@ function FarmersDirectory() {
 
   const [q, setQ] = useState("");
   const [climate, setClimate] = useState<string>("All");
+  const [inclusion, setInclusion] = useState<"All" | "women" | "youth" | "disability">("All");
+  const [trustBand, setTrustBand] = useState<"All" | "high" | "mid" | "low">("All");
 
   useEffect(() => {
     const pending = sessionStorage.getItem("agritrust:dashboard-search");
@@ -26,12 +28,19 @@ function FarmersDirectory() {
   }, []);
 
   const list = useMemo(() => {
-    return (farmers.data ?? []).filter(
-      (a) =>
-        (climate === "All" || (a.climate_risk ?? "").toLowerCase() === climate.toLowerCase()) &&
-        (q === "" || `${a.name} ${a.county ?? ""} ${(a.crops ?? []).join(" ")}`.toLowerCase().includes(q.toLowerCase())),
-    );
-  }, [q, climate, farmers.data]);
+    return (farmers.data ?? []).filter((a) => {
+      if (climate !== "All" && (a.climate_risk ?? "").toLowerCase() !== climate.toLowerCase()) return false;
+      if (inclusion === "women" && !(a.gender === "female" || a.in_women_group)) return false;
+      if (inclusion === "youth" && !(a.is_youth)) return false;
+      if (inclusion === "disability" && !a.has_disability) return false;
+      const s = a.score ?? 0;
+      if (trustBand === "high" && s < 75) return false;
+      if (trustBand === "mid" && (s < 55 || s >= 75)) return false;
+      if (trustBand === "low" && s >= 55) return false;
+      if (q && !`${a.name} ${a.county ?? ""} ${(a.crops ?? []).join(" ")} ${a.cooperative ?? ""}`.toLowerCase().includes(q.toLowerCase())) return false;
+      return true;
+    });
+  }, [q, climate, inclusion, trustBand, farmers.data]);
 
   return (
     <div className="space-y-8">
@@ -41,18 +50,12 @@ function FarmersDirectory() {
           <div className="relative max-w-sm flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input value={q} onChange={(e) => setQ(e.target.value)}
-              placeholder="Search by name, county, crop…"
+              placeholder="Search name, county, crop, cooperative…"
               className="h-9 w-full rounded-lg border border-border bg-surface-elevated/60 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-emerald" />
           </div>
-          <div className="flex items-center gap-1.5 rounded-lg bg-surface-elevated/60 p-1 text-xs">
-            <SlidersHorizontal className="ml-2 h-3.5 w-3.5 text-muted-foreground" />
-            {["All", "low", "medium", "high"].map((c) => (
-              <button key={c} onClick={() => setClimate(c)}
-                className={`rounded-md px-3 py-1.5 font-semibold transition ${climate === c ? "bg-background text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                {c === "All" ? "All" : c[0].toUpperCase() + c.slice(1)}
-              </button>
-            ))}
-          </div>
+          <FilterGroup icon label="Climate" value={climate} setValue={setClimate} options={["All","low","medium","high"]} />
+          <FilterGroup label="Inclusion" value={inclusion} setValue={(v) => setInclusion(v as any)} options={["All","women","youth","disability"]} />
+          <FilterGroup label="Trust" value={trustBand} setValue={(v) => setTrustBand(v as any)} options={["All","high","mid","low"]} />
         </div>
       </Card>
 
