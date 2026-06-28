@@ -16,17 +16,22 @@ export const getMyRecentUssdSessions = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("ussd_sessions")
-      .select("id, created_at, text, phone")
+      .select("session_id, created_at, step, payload, phone")
       .eq("phone", phone)
       .order("created_at", { ascending: false })
       .limit(5);
     if (error) throw error;
 
     const sessions = (data ?? []).map((row) => {
-      const text = (row.text ?? "") as string;
+      const text = ((row.payload as { text?: string } | null)?.text ?? "") as string;
       const last_input = text ? text.split("*").pop() ?? "" : "(menu)";
       const menu = menuLabel(text);
-      return { id: row.id as string, created_at: row.created_at as string, last_input, menu };
+      return {
+        id: row.session_id as string,
+        created_at: row.created_at as string,
+        last_input,
+        menu,
+      };
     });
     return { phone, sessions };
   });
