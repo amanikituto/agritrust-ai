@@ -114,17 +114,14 @@ export const Route = createFileRoute("/api/public/ussd")({
           }
         }
 
-        // 5: Climate alerts
+        // 5: Climate alerts (static guidance for the demo)
         if (steps[0] === "5") {
-          if (steps.length === 1) return res("CON Enter county name (e.g. Kiambu):");
-          const county = steps[1];
-          try {
-            const { getClimate } = await import("@/lib/climate.functions");
-            const c = await getClimate({ data: { county } });
-            return res(`END ${c.location.name}\nTemp: ${c.current.temperatureC.toFixed(1)}C\nRain 7d: ${c.rainfall7d}mm\nDrought: ${c.droughtIndex}`);
-          } catch {
-            return res("END Weather temporarily unavailable.");
-          }
+          return res(
+            "END Weather advisory:\n" +
+            "Light rains expected this week.\n" +
+            "Plant short-cycle maize. Watch for fall armyworm.\n" +
+            "Visit *483*900*4# to log pest outbreaks.",
+          );
         }
 
         if (steps[0] === "6") return res("END Asante. Kwaheri!");
