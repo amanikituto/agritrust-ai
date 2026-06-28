@@ -9,10 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UssdRouteImport } from './routes/ussd'
+import { Route as LenderRouteImport } from './routes/lender'
+import { Route as FarmerIntakeRouteImport } from './routes/farmer-intake'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GraphFarmerIdRouteImport } from './routes/graph.$farmerId'
+import { Route as FarmerUpdatesRouteImport } from './routes/farmer.updates'
+import { Route as FarmerIdRouteImport } from './routes/farmer.$id'
+import { Route as LenderFarmerIdRouteImport } from './routes/lender.farmer.$id'
 import { Route as ApiPublicUssdRouteImport } from './routes/api/public/ussd'
 
+const UssdRoute = UssdRouteImport.update({
+  id: '/ussd',
+  path: '/ussd',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LenderRoute = LenderRouteImport.update({
+  id: '/lender',
+  path: '/lender',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmerIntakeRoute = FarmerIntakeRouteImport.update({
+  id: '/farmer-intake',
+  path: '/farmer-intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -23,6 +45,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraphFarmerIdRoute = GraphFarmerIdRouteImport.update({
+  id: '/graph/$farmerId',
+  path: '/graph/$farmerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmerUpdatesRoute = FarmerUpdatesRouteImport.update({
+  id: '/farmer/updates',
+  path: '/farmer/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmerIdRoute = FarmerIdRouteImport.update({
+  id: '/farmer/$id',
+  path: '/farmer/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LenderFarmerIdRoute = LenderFarmerIdRouteImport.update({
+  id: '/farmer/$id',
+  path: '/farmer/$id',
+  getParentRoute: () => LenderRoute,
+} as any)
 const ApiPublicUssdRoute = ApiPublicUssdRouteImport.update({
   id: '/api/public/ussd',
   path: '/api/public/ussd',
@@ -32,35 +74,114 @@ const ApiPublicUssdRoute = ApiPublicUssdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/farmer-intake': typeof FarmerIntakeRoute
+  '/lender': typeof LenderRouteWithChildren
+  '/ussd': typeof UssdRoute
+  '/farmer/$id': typeof FarmerIdRoute
+  '/farmer/updates': typeof FarmerUpdatesRoute
+  '/graph/$farmerId': typeof GraphFarmerIdRoute
   '/api/public/ussd': typeof ApiPublicUssdRoute
+  '/lender/farmer/$id': typeof LenderFarmerIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/farmer-intake': typeof FarmerIntakeRoute
+  '/lender': typeof LenderRouteWithChildren
+  '/ussd': typeof UssdRoute
+  '/farmer/$id': typeof FarmerIdRoute
+  '/farmer/updates': typeof FarmerUpdatesRoute
+  '/graph/$farmerId': typeof GraphFarmerIdRoute
   '/api/public/ussd': typeof ApiPublicUssdRoute
+  '/lender/farmer/$id': typeof LenderFarmerIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/farmer-intake': typeof FarmerIntakeRoute
+  '/lender': typeof LenderRouteWithChildren
+  '/ussd': typeof UssdRoute
+  '/farmer/$id': typeof FarmerIdRoute
+  '/farmer/updates': typeof FarmerUpdatesRoute
+  '/graph/$farmerId': typeof GraphFarmerIdRoute
   '/api/public/ussd': typeof ApiPublicUssdRoute
+  '/lender/farmer/$id': typeof LenderFarmerIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/api/public/ussd'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/farmer-intake'
+    | '/lender'
+    | '/ussd'
+    | '/farmer/$id'
+    | '/farmer/updates'
+    | '/graph/$farmerId'
+    | '/api/public/ussd'
+    | '/lender/farmer/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/api/public/ussd'
-  id: '__root__' | '/' | '/auth' | '/api/public/ussd'
+  to:
+    | '/'
+    | '/auth'
+    | '/farmer-intake'
+    | '/lender'
+    | '/ussd'
+    | '/farmer/$id'
+    | '/farmer/updates'
+    | '/graph/$farmerId'
+    | '/api/public/ussd'
+    | '/lender/farmer/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/farmer-intake'
+    | '/lender'
+    | '/ussd'
+    | '/farmer/$id'
+    | '/farmer/updates'
+    | '/graph/$farmerId'
+    | '/api/public/ussd'
+    | '/lender/farmer/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  FarmerIntakeRoute: typeof FarmerIntakeRoute
+  LenderRoute: typeof LenderRouteWithChildren
+  UssdRoute: typeof UssdRoute
+  FarmerIdRoute: typeof FarmerIdRoute
+  FarmerUpdatesRoute: typeof FarmerUpdatesRoute
+  GraphFarmerIdRoute: typeof GraphFarmerIdRoute
   ApiPublicUssdRoute: typeof ApiPublicUssdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/ussd': {
+      id: '/ussd'
+      path: '/ussd'
+      fullPath: '/ussd'
+      preLoaderRoute: typeof UssdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lender': {
+      id: '/lender'
+      path: '/lender'
+      fullPath: '/lender'
+      preLoaderRoute: typeof LenderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmer-intake': {
+      id: '/farmer-intake'
+      path: '/farmer-intake'
+      fullPath: '/farmer-intake'
+      preLoaderRoute: typeof FarmerIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -75,6 +196,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graph/$farmerId': {
+      id: '/graph/$farmerId'
+      path: '/graph/$farmerId'
+      fullPath: '/graph/$farmerId'
+      preLoaderRoute: typeof GraphFarmerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmer/updates': {
+      id: '/farmer/updates'
+      path: '/farmer/updates'
+      fullPath: '/farmer/updates'
+      preLoaderRoute: typeof FarmerUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmer/$id': {
+      id: '/farmer/$id'
+      path: '/farmer/$id'
+      fullPath: '/farmer/$id'
+      preLoaderRoute: typeof FarmerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lender/farmer/$id': {
+      id: '/lender/farmer/$id'
+      path: '/farmer/$id'
+      fullPath: '/lender/farmer/$id'
+      preLoaderRoute: typeof LenderFarmerIdRouteImport
+      parentRoute: typeof LenderRoute
+    }
     '/api/public/ussd': {
       id: '/api/public/ussd'
       path: '/api/public/ussd'
@@ -85,9 +234,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface LenderRouteChildren {
+  LenderFarmerIdRoute: typeof LenderFarmerIdRoute
+}
+
+const LenderRouteChildren: LenderRouteChildren = {
+  LenderFarmerIdRoute: LenderFarmerIdRoute,
+}
+
+const LenderRouteWithChildren =
+  LenderRoute._addFileChildren(LenderRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  FarmerIntakeRoute: FarmerIntakeRoute,
+  LenderRoute: LenderRouteWithChildren,
+  UssdRoute: UssdRoute,
+  FarmerIdRoute: FarmerIdRoute,
+  FarmerUpdatesRoute: FarmerUpdatesRoute,
+  GraphFarmerIdRoute: GraphFarmerIdRoute,
   ApiPublicUssdRoute: ApiPublicUssdRoute,
 }
 export const routeTree = rootRouteImport
