@@ -6,7 +6,7 @@ import { Accessibility, Search, SlidersHorizontal } from "lucide-react";
 import { Card, SectionTitle, Tag } from "@/components/dashboard/primitives";
 import { listFarmersDirectory } from "@/lib/farmer-data.functions";
 
-export const Route = createFileRoute("/lender/farmers")({
+export const Route = createFileRoute("/lender/farmers/")({
   component: FarmersDirectory,
 });
 

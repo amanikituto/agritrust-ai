@@ -23,7 +23,6 @@ import { Route as LenderReportsRouteImport } from './routes/lender.reports'
 import { Route as LenderPortfolioRouteImport } from './routes/lender.portfolio'
 import { Route as LenderNotificationsRouteImport } from './routes/lender.notifications'
 import { Route as LenderGraphRouteImport } from './routes/lender.graph'
-import { Route as LenderFarmersRouteImport } from './routes/lender.farmers'
 import { Route as LenderExplainabilityRouteImport } from './routes/lender.explainability'
 import { Route as LenderClimateRouteImport } from './routes/lender.climate'
 import { Route as LenderAssistantRouteImport } from './routes/lender.assistant'
@@ -44,6 +43,7 @@ import { Route as FarmerCooperativeRouteImport } from './routes/farmer.cooperati
 import { Route as FarmerClimateRouteImport } from './routes/farmer.climate'
 import { Route as FarmerAssistantRouteImport } from './routes/farmer.assistant'
 import { Route as FarmerAnalyticsRouteImport } from './routes/farmer.analytics'
+import { Route as LenderFarmersIndexRouteImport } from './routes/lender.farmers.index'
 import { Route as LenderFarmersIdRouteImport } from './routes/lender.farmers.$id'
 import { Route as LenderApplicationsIdRouteImport } from './routes/lender.applications.$id'
 import { Route as ApiPublicUssdRouteImport } from './routes/api/public/ussd'
@@ -118,11 +118,6 @@ const LenderNotificationsRoute = LenderNotificationsRouteImport.update({
 const LenderGraphRoute = LenderGraphRouteImport.update({
   id: '/graph',
   path: '/graph',
-  getParentRoute: () => LenderRoute,
-} as any)
-const LenderFarmersRoute = LenderFarmersRouteImport.update({
-  id: '/farmers',
-  path: '/farmers',
   getParentRoute: () => LenderRoute,
 } as any)
 const LenderExplainabilityRoute = LenderExplainabilityRouteImport.update({
@@ -225,10 +220,15 @@ const FarmerAnalyticsRoute = FarmerAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => FarmerRoute,
 } as any)
+const LenderFarmersIndexRoute = LenderFarmersIndexRouteImport.update({
+  id: '/farmers/',
+  path: '/farmers/',
+  getParentRoute: () => LenderRoute,
+} as any)
 const LenderFarmersIdRoute = LenderFarmersIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => LenderFarmersRoute,
+  id: '/farmers/$id',
+  path: '/farmers/$id',
+  getParentRoute: () => LenderRoute,
 } as any)
 const LenderApplicationsIdRoute = LenderApplicationsIdRouteImport.update({
   id: '/$id',
@@ -277,7 +277,6 @@ export interface FileRoutesByFullPath {
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
   '/lender/explainability': typeof LenderExplainabilityRoute
-  '/lender/farmers': typeof LenderFarmersRouteWithChildren
   '/lender/graph': typeof LenderGraphRoute
   '/lender/notifications': typeof LenderNotificationsRoute
   '/lender/portfolio': typeof LenderPortfolioRoute
@@ -290,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/lender/farmers/': typeof LenderFarmersIndexRoute
   '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
   '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
@@ -317,7 +317,6 @@ export interface FileRoutesByTo {
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
   '/lender/explainability': typeof LenderExplainabilityRoute
-  '/lender/farmers': typeof LenderFarmersRouteWithChildren
   '/lender/graph': typeof LenderGraphRoute
   '/lender/notifications': typeof LenderNotificationsRoute
   '/lender/portfolio': typeof LenderPortfolioRoute
@@ -330,6 +329,7 @@ export interface FileRoutesByTo {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/lender/farmers': typeof LenderFarmersIndexRoute
   '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
   '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
@@ -360,7 +360,6 @@ export interface FileRoutesById {
   '/lender/assistant': typeof LenderAssistantRoute
   '/lender/climate': typeof LenderClimateRoute
   '/lender/explainability': typeof LenderExplainabilityRoute
-  '/lender/farmers': typeof LenderFarmersRouteWithChildren
   '/lender/graph': typeof LenderGraphRoute
   '/lender/notifications': typeof LenderNotificationsRoute
   '/lender/portfolio': typeof LenderPortfolioRoute
@@ -373,6 +372,7 @@ export interface FileRoutesById {
   '/api/public/ussd': typeof ApiPublicUssdRoute
   '/lender/applications/$id': typeof LenderApplicationsIdRoute
   '/lender/farmers/$id': typeof LenderFarmersIdRoute
+  '/lender/farmers/': typeof LenderFarmersIndexRoute
   '/api/public/agent/discover': typeof ApiPublicAgentDiscoverRoute
   '/api/public/agent/invoke': typeof ApiPublicAgentInvokeRoute
 }
@@ -404,7 +404,6 @@ export interface FileRouteTypes {
     | '/lender/assistant'
     | '/lender/climate'
     | '/lender/explainability'
-    | '/lender/farmers'
     | '/lender/graph'
     | '/lender/notifications'
     | '/lender/portfolio'
@@ -417,6 +416,7 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/lender/farmers/'
     | '/api/public/agent/discover'
     | '/api/public/agent/invoke'
   fileRoutesByTo: FileRoutesByTo
@@ -444,7 +444,6 @@ export interface FileRouteTypes {
     | '/lender/assistant'
     | '/lender/climate'
     | '/lender/explainability'
-    | '/lender/farmers'
     | '/lender/graph'
     | '/lender/notifications'
     | '/lender/portfolio'
@@ -457,6 +456,7 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/lender/farmers'
     | '/api/public/agent/discover'
     | '/api/public/agent/invoke'
   id:
@@ -486,7 +486,6 @@ export interface FileRouteTypes {
     | '/lender/assistant'
     | '/lender/climate'
     | '/lender/explainability'
-    | '/lender/farmers'
     | '/lender/graph'
     | '/lender/notifications'
     | '/lender/portfolio'
@@ -499,6 +498,7 @@ export interface FileRouteTypes {
     | '/api/public/ussd'
     | '/lender/applications/$id'
     | '/lender/farmers/$id'
+    | '/lender/farmers/'
     | '/api/public/agent/discover'
     | '/api/public/agent/invoke'
   fileRoutesById: FileRoutesById
@@ -612,13 +612,6 @@ declare module '@tanstack/react-router' {
       path: '/graph'
       fullPath: '/lender/graph'
       preLoaderRoute: typeof LenderGraphRouteImport
-      parentRoute: typeof LenderRoute
-    }
-    '/lender/farmers': {
-      id: '/lender/farmers'
-      path: '/farmers'
-      fullPath: '/lender/farmers'
-      preLoaderRoute: typeof LenderFarmersRouteImport
       parentRoute: typeof LenderRoute
     }
     '/lender/explainability': {
@@ -761,12 +754,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FarmerAnalyticsRouteImport
       parentRoute: typeof FarmerRoute
     }
+    '/lender/farmers/': {
+      id: '/lender/farmers/'
+      path: '/farmers'
+      fullPath: '/lender/farmers/'
+      preLoaderRoute: typeof LenderFarmersIndexRouteImport
+      parentRoute: typeof LenderRoute
+    }
     '/lender/farmers/$id': {
       id: '/lender/farmers/$id'
-      path: '/$id'
+      path: '/farmers/$id'
       fullPath: '/lender/farmers/$id'
       preLoaderRoute: typeof LenderFarmersIdRouteImport
-      parentRoute: typeof LenderFarmersRoute
+      parentRoute: typeof LenderRoute
     }
     '/lender/applications/$id': {
       id: '/lender/applications/$id'
@@ -853,24 +853,11 @@ const LenderApplicationsRouteChildren: LenderApplicationsRouteChildren = {
 const LenderApplicationsRouteWithChildren =
   LenderApplicationsRoute._addFileChildren(LenderApplicationsRouteChildren)
 
-interface LenderFarmersRouteChildren {
-  LenderFarmersIdRoute: typeof LenderFarmersIdRoute
-}
-
-const LenderFarmersRouteChildren: LenderFarmersRouteChildren = {
-  LenderFarmersIdRoute: LenderFarmersIdRoute,
-}
-
-const LenderFarmersRouteWithChildren = LenderFarmersRoute._addFileChildren(
-  LenderFarmersRouteChildren,
-)
-
 interface LenderRouteChildren {
   LenderApplicationsRoute: typeof LenderApplicationsRouteWithChildren
   LenderAssistantRoute: typeof LenderAssistantRoute
   LenderClimateRoute: typeof LenderClimateRoute
   LenderExplainabilityRoute: typeof LenderExplainabilityRoute
-  LenderFarmersRoute: typeof LenderFarmersRouteWithChildren
   LenderGraphRoute: typeof LenderGraphRoute
   LenderNotificationsRoute: typeof LenderNotificationsRoute
   LenderPortfolioRoute: typeof LenderPortfolioRoute
@@ -879,6 +866,8 @@ interface LenderRouteChildren {
   LenderSettingsRoute: typeof LenderSettingsRoute
   LenderTrustRoute: typeof LenderTrustRoute
   LenderIndexRoute: typeof LenderIndexRoute
+  LenderFarmersIdRoute: typeof LenderFarmersIdRoute
+  LenderFarmersIndexRoute: typeof LenderFarmersIndexRoute
 }
 
 const LenderRouteChildren: LenderRouteChildren = {
@@ -886,7 +875,6 @@ const LenderRouteChildren: LenderRouteChildren = {
   LenderAssistantRoute: LenderAssistantRoute,
   LenderClimateRoute: LenderClimateRoute,
   LenderExplainabilityRoute: LenderExplainabilityRoute,
-  LenderFarmersRoute: LenderFarmersRouteWithChildren,
   LenderGraphRoute: LenderGraphRoute,
   LenderNotificationsRoute: LenderNotificationsRoute,
   LenderPortfolioRoute: LenderPortfolioRoute,
@@ -895,6 +883,8 @@ const LenderRouteChildren: LenderRouteChildren = {
   LenderSettingsRoute: LenderSettingsRoute,
   LenderTrustRoute: LenderTrustRoute,
   LenderIndexRoute: LenderIndexRoute,
+  LenderFarmersIdRoute: LenderFarmersIdRoute,
+  LenderFarmersIndexRoute: LenderFarmersIndexRoute,
 }
 
 const LenderRouteWithChildren =
