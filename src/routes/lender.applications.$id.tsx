@@ -112,7 +112,7 @@ function DecisionWorkspace() {
   });
 
   const decide = useMutation({
-    mutationFn: (decision: "approved" | "rejected" | "under_review") =>
+    mutationFn: (decision: "approved" | "approved_with_conditions" | "needs_info" | "rejected" | "under_review") =>
       decideFn({ data: { id, decision, notes } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["app", id] });
