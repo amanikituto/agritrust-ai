@@ -334,17 +334,29 @@ function UnlockedProfile({
       )}
 
       <Card title="Explainability · the four questions" icon={Brain}>
-        <div className="grid gap-3 sm:grid-cols-2 text-sm">
+        <div className="grid gap-4 sm:grid-cols-2 text-sm">
           <div>
-            <p className="text-xs uppercase tracking-wider text-emerald">Positive</p>
-            <ul className="mt-2 space-y-1 text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">1. Why did the farmer receive this score?</p>
+            <p className="mt-1">Composite score reflects repayment, cooperative, production, mobile money, savings, inputs, training, climate resilience and insurance signals weighted per AFRACA guidance. Inclusion attributes (gender, age, disability, land ownership) are never used as negative factors.</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">2. What can the farmer do to improve?</p>
+            <ul className="mt-1 space-y-0.5 text-muted-foreground">
+              <li>• Add crop or livestock insurance</li>
+              <li>• Log more sales and repayments via Record Updates</li>
+              <li>• Attend training / extension visits</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-emerald">3. Signals that increased confidence</p>
+            <ul className="mt-1 space-y-1 text-muted-foreground">
               {positiveFactors.map((f) => <li key={f}>+ {f}</li>)}
               {positiveFactors.length === 0 && <li>—</li>}
             </ul>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-rose">Negative</p>
-            <ul className="mt-2 space-y-1 text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-rose">4. Signals that reduced confidence</p>
+            <ul className="mt-1 space-y-1 text-muted-foreground">
               {negativeFactors.map((f) => <li key={f}>− {f}</li>)}
               {negativeFactors.length === 0 && <li>—</li>}
             </ul>
