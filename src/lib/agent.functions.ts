@@ -36,12 +36,15 @@ export const lenderRequestFarmerProfile = createServerFn({ method: "POST" })
     // 5. Outbound agent-to-agent call: AgriTrust pays Climate Agent (second tx)
     const climate = await payOutboundClimateAgent();
 
-    // 6. Sign receipt
+    // 6. Sign receipt — covers the assessment fields the lender will display.
     const receipt = {
       jobId: invocation.jobId,
       farmerId: data.farmerId,
       tier: data.tier,
-      score: profile.masumi_trust_score,
+      trustScore: profile.assessment.farmer_trust_score,
+      creditRiskScore: profile.assessment.credit_risk_score,
+      recommendedLimitKes: profile.assessment.recommended_lending_limit_kes,
+      confidence: profile.assessment.confidence_level,
       issuedAt: new Date().toISOString(),
     };
     const signature = signReceipt(receipt);
