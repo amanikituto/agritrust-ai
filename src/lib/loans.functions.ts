@@ -251,7 +251,11 @@ export const getApplication = createServerFn({ method: "GET" })
 
 export const decideApplication = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string; decision: "approved" | "rejected" | "under_review"; notes?: string }) => d)
+  .inputValidator((d: {
+    id: string;
+    decision: "approved" | "approved_with_conditions" | "needs_info" | "rejected" | "under_review";
+    notes?: string;
+  }) => d)
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("loan_applications")
@@ -265,11 +269,20 @@ export const decideApplication = createServerFn({ method: "POST" })
       .single();
     if (error) throw error;
 
+    const notifTitle: Record<string, string> = {
+      approved: "Loan approved",
+      approved_with_conditions: "Loan approved (with conditions)",
+      needs_info: "More information requested",
+      rejected: "Loan declined",
+      under_review: "Loan under review",
+    };
+
     await context.supabase.from("notifications").insert({
       user_id: row.farmer_id,
-      type: data.decision === "approved" ? "loan_approval" : data.decision === "rejected" ? "loan_rejection" : "system",
-      title: `Loan ${data.decision}`,
-      body: data.notes ?? `Your application was ${data.decision}.`,
+      type: data.decision === "approved" || data.decision === "approved_with_conditions" ? "loan_approval"
+        : data.decision === "rejected" ? "loan_rejection" : "system",
+      title: notifTitle[data.decision] ?? `Loan ${data.decision}`,
+      body: data.notes ?? `Your application was ${data.decision.replaceAll("_", " ")}.`,
     });
 
     await context.supabase.from("audit_events").insert({
