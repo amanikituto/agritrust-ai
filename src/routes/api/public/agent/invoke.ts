@@ -60,7 +60,10 @@ export const Route = createFileRoute("/api/public/agent/invoke")({
             jobId,
             farmerId,
             tier,
-            score: profile.masumi_trust_score,
+            trustScore: profile.assessment.farmer_trust_score,
+            creditRiskScore: profile.assessment.credit_risk_score,
+            recommendedLimitKes: profile.assessment.recommended_lending_limit_kes,
+            confidence: profile.assessment.confidence_level,
             issuedAt: new Date().toISOString(),
           };
           const signature = signReceipt(receipt);
